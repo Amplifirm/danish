@@ -1,7 +1,7 @@
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
-import HomePage from './pages/Home';
+import AOTPlatform from './pages/Home';
 import AmplifirmPricingPage from './pages/Pricing';
 import BusinessConsultancyPage from './pages/BusinessConsultancy';
 import MarketingSolutionsPage from './pages/MarketingPage';
@@ -16,7 +16,7 @@ function App() {
     <Router>
       <div className="App">
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          <Route path="/" element={<AOTPlatform />} />
           <Route path="/pricing" element={<AmplifirmPricingPage />} /> 
           <Route path="/contact" element={<ContactPage />} /> 
           <Route path="/services/business-consultancy" element={<BusinessConsultancyPage />} /> 
