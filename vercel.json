@@ -12,9 +12,5 @@
     "api/health.js": {
       "maxDuration": 5
     }
-  },
-  "env": {
-    "MONGODB_URI": "@mongodb-uri",
-    "JWT_SECRET": "@jwt-secret"
   }
 }
