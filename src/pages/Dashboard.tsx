@@ -15,6 +15,7 @@ interface UserType {
   registeredSessions?: RegisteredSession[];
 }
 
+
 interface RegisteredSession {
   sessionId: string;
   sessionTitle?: string;
