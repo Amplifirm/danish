@@ -1,210 +1,454 @@
-import  { useState, useEffect } from 'react';
-import { ChevronRight, Calendar, MapPin, Users, Shield, TrendingUp, DollarSign, Zap, Lock, Play, Menu, X, CheckCircle, ArrowRight,  Target,  Building } from 'lucide-react';
+import { useState } from 'react';
+import { Calendar, MapPin, Users, ArrowRight, Play, CheckCircle, TrendingUp, DollarSign, Zap, Shield, ChevronRight, X } from 'lucide-react';
 
-const App1 = () => {
-  const [scrolled, setScrolled] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState('tracks');
+// Type definitions
+interface Session {
+  title: string;
+  speaker: string;
+  time: string;
+  description: string;
+}
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+interface Track {
+  id: number;
+  title: string;
+  icon: JSX.Element;
+  color: string;
+  bgColor: string;
+  description: string;
+  fullDescription: string;
+  keyTopics: string[];
+  sessions: Session[];
+  outcomes: string[];
+}
 
-  const tracks = [
+interface Speaker {
+  id: string;
+  name: string;
+  title: string;
+  company: string;
+  bio: string;
+  fullBio: string;
+  expertise: string[];
+  sessions: string[];
+  achievements: string[];
+  quote: string;
+  image: string;
+}
+
+const HomePage = () => {
+  const [selectedTrack, setSelectedTrack] = useState<Track | null>(null);
+  const [selectedSpeaker, setSelectedSpeaker] = useState<Speaker | null>(null);
+
+  
+
+  const tracks: Track[] = [
     {
       id: 1,
       title: "Drive Revenue",
-      icon: <TrendingUp className="w-6 h-6" />,
-      color: "from-blue-600 to-blue-700",
+      icon: <TrendingUp className="w-5 h-5" />,
+      color: "#3C1AF9",
+      bgColor: "bg-blue-50",
       description: "AI integration, customer success strategies, and growth optimization",
-      topics: ["AI Integration", "Customer Success", "E365 Implementation", "Growth Strategies"],
-      sessions: 6
+      fullDescription: "Discover innovative strategies to accelerate business growth through cutting-edge technology and customer-centric approaches. Learn how AI can transform your sales processes, how to build exceptional customer success programs, and implement growth optimization techniques that deliver measurable results.",
+      keyTopics: ["AI Integration", "Customer Success", "E365 Implementation", "Growth Optimization"],
+      sessions: [
+        {
+          title: "FC Motown: How the little guy can succeed in business and sport",
+          speaker: "Dan Karosen",
+          time: "10:25 AM - 10:50 AM",
+          description: "Discover how FC Motown rose from local play to NPSL National Championship through bold leadership and vision."
+        },
+        {
+          title: "AI Readiness Assessment",
+          speaker: "Bryan Antepara", 
+          time: "11:00 AM - 11:25 AM",
+          description: "Essential concepts and processes to implement AI successfully in your organization."
+        },
+        {
+          title: "How Customer Success Can Supercharge Your Revenue",
+          speaker: "Brindavani Pathuri",
+          time: "11:30 AM - 11:55 AM",
+          description: "How building stronger customer relationships directly fuels growth and retention."
+        },
+        {
+          title: "Doing Business with the Public Sector",
+          speaker: "Paul Muir",
+          time: "1:00 PM - 1:50 PM", 
+          description: "Navigate government procurement processes and build relationships with municipalities."
+        },
+        {
+          title: "The e365 Advantage: Streamlined Services for Small Business Growth",
+          speaker: "Bryan Antepara",
+          time: "2:00 PM - 2:50 PM",
+          description: "How e365 simplifies technology management and creates room for businesses to thrive."
+        },
+        {
+          title: "How to Embrace AI without Growing Pains",
+          speaker: "Deep Ranipa", 
+          time: "3:00 PM - 3:50 PM",
+          description: "Leverage AI to accelerate business growth while avoiding operational disruptions."
+        }
+      ],
+      outcomes: [
+        "Implement AI-driven sales strategies",
+        "Build customer success programs that retain and grow accounts", 
+        "Identify new revenue opportunities",
+        "Leverage data analytics for growth decisions"
+      ]
     },
     {
       id: 2,
-      title: "Reduce Expenses",
-      icon: <DollarSign className="w-6 h-6" />,
-      color: "from-emerald-600 to-emerald-700",
+      title: "Reduce Expenses", 
+      icon: <DollarSign className="w-5 h-5" />,
+      color: "#1DC5AC",
+      bgColor: "bg-emerald-50",
       description: "Cost optimization through modern cloud platforms and AI tools",
-      topics: ["Cloud Migration", "AI Cost Reduction", "Compliance Optimization", "Budget Management"],
-      sessions: 6
+      fullDescription: "Master intelligent cost reduction without sacrificing quality or growth potential. Explore how modern cloud technologies and AI-powered tools can streamline operations, reduce overhead, and optimize resource allocation for maximum efficiency.",
+      keyTopics: ["Cloud Migration", "AI Cost Reduction", "Compliance Optimization", "Vendor Management"],
+      sessions: [
+        {
+          title: "Do More with Less - How Technology is the Best Anti-Inflation Tool",
+          speaker: "Nirvan Ramoutar",
+          time: "10:25 AM - 10:50 AM", 
+          description: "Technologies and systems that deliver immediate impact—helping you cut costs, protect margins, and stay competitive."
+        },
+        {
+          title: "Creating an IT Strategy with Microsoft that Works for your Business",
+          speaker: "Deep Ranipa",
+          time: "11:00 AM - 11:25 AM",
+          description: "How Microsoft Dynamics 365 can streamline operations while keeping Excel integration seamless."
+        },
+        {
+          title: "Reduce your Telephone Operating Costs with Microsoft Teams", 
+          speaker: "Bryan Antepara",
+          time: "11:30 AM - 11:55 AM",
+          description: "Cut phone system expenses by moving to Microsoft Teams with smooth migration strategies."
+        },
+        {
+          title: "How to create an effective supplier audit to Keep Your Costs Under control",
+          speaker: "Maria Scarmardo",
+          time: "1:00 PM - 1:50 PM",
+          description: "Structured audits to uncover inefficiencies, mitigate risks, and strengthen supplier relationships."
+        },
+        {
+          title: "Smart Savings: A Practical Framework for Cutting Costs Without Cutting Corners",
+          speaker: "Emory Edwards",
+          time: "2:00 PM - 2:50 PM",
+          description: "Practical strategies for reducing expenses while maintaining quality and performance."
+        },
+        {
+          title: "The Scalability Playbook: Maximize Growth, Minimize Overhead",
+          speaker: "Carl Mazzanti",
+          time: "3:00 PM - 3:50 PM",
+          description: "Proven strategies for expanding operations efficiently while keeping costs under control."
+        }
+      ],
+      outcomes: [
+        "Reduce operational costs by 15-30%",
+        "Optimize cloud spending and resources", 
+        "Streamline vendor relationships",
+        "Implement cost-effective automation solutions"
+      ]
     },
     {
       id: 3,
       title: "Increase Productivity",
-      icon: <Zap className="w-6 h-6" />,
-      color: "from-purple-600 to-purple-700",
+      icon: <Zap className="w-5 h-5" />,
+      color: "#B61BFD", 
+      bgColor: "bg-purple-50",
       description: "Workflow automation and operational efficiency solutions",
-      topics: ["Task Automation", "Remote Workflows", "Team Efficiency", "Digital Transformation"],
-      sessions: 6
+      fullDescription: "Transform your business operations with advanced automation technologies and productivity optimization strategies. Learn how to eliminate bottlenecks, streamline workflows, and empower your team to focus on high-value activities that drive business growth.",
+      keyTopics: ["Task Automation", "Remote Workflows", "Team Efficiency", "Digital Transformation"],
+      sessions: [
+        {
+          title: "Navigating a Cloud Migration",
+          speaker: "John Logan",
+          time: "10:25 AM - 10:50 AM",
+          description: "Break down the cloud migration process into clear, actionable steps for small businesses."
+        },
+        {
+          title: "Unlocking Exceptional Profitability: How Firms Are Achieving Higher EBITDA Growth",
+          speaker: "Shiva Kumar",
+          time: "11:00 AM - 11:25 AM", 
+          description: "Dynamics 365 solutions for Finance, Accounting, and Supply Chain Management challenges."
+        },
+        {
+          title: "Digital Labor and Process Automation",
+          speaker: "Deepanshu Negi",
+          time: "11:30 AM - 11:55 AM",
+          description: "How automation technologies reshape workflows and boost efficiency across industries."
+        },
+        {
+          title: "The Productivity Paradox: When Technology Helps—and When It Doesn't",
+          speaker: "Oya Tukel", 
+          time: "1:00 PM - 1:50 PM",
+          description: "Why new tools don't always translate into efficiency and when tech truly drives performance."
+        },
+        {
+          title: "How Capital Can Improve Productivity",
+          speaker: "Ryan Silvestre",
+          time: "2:00 PM - 2:50 PM",
+          description: "Strategic investment in resources, technology, and people to drive measurable efficiency gains."
+        },
+        {
+          title: "Eliminating IT Bottlenecks: How 24/7 Monitoring Supercharges Productivity",
+          speaker: "Nirvan Ramoutar",
+          time: "3:00 PM - 3:50 PM",
+          description: "Round-the-clock network monitoring to eliminate IT slowdowns and reduce downtime."
+        }
+      ],
+      outcomes: [
+        "Automate repetitive tasks and workflows",
+        "Increase team productivity by 25-40%",
+        "Optimize remote and hybrid work environments", 
+        "Implement data-driven performance improvements"
+      ]
     },
     {
       id: 4,
-      title: "Cybersecurity",
-      icon: <Shield className="w-6 h-6" />,
-      color: "from-red-600 to-red-700",
+      title: "Enhance Cybersecurity",
+      icon: <Shield className="w-5 h-5" />,
+      color: "#2EA1ED",
+      bgColor: "bg-red-50", 
       description: "Advanced threat protection and data security strategies",
-      topics: ["Ransomware Prevention", "Data Protection", "Security Innovation", "Threat Intelligence"],
-      sessions: 6
+      fullDescription: "Build a robust cybersecurity framework that protects your business from evolving threats while enabling growth and innovation. Learn cutting-edge security strategies, threat intelligence, and risk management approaches tailored for small and medium businesses.",
+      keyTopics: ["Ransomware Prevention", "Data Protection", "Security Innovation", "Threat Intelligence"],
+      sessions: [
+        {
+          title: "Latest AI Security Threats",
+          speaker: "John Williamson",
+          time: "10:25 AM - 10:50 AM",
+          description: "Latest update on evolving AI-based threats and how to protect SMBs successfully."
+        },
+        {
+          title: "eCare Network Management",
+          speaker: "Carl Mazzanti",
+          time: "11:00 AM - 11:25 AM",
+          description: "Proactive monitoring, rapid response, and expert support to reduce downtime and tighten security."
+        },
+        {
+          title: "How to Keep Your Company Safe",
+          speaker: "John Logan & Scott Bennet", 
+          time: "11:30 AM - 11:55 AM",
+          description: "Comprehensive disaster recovery planning including all departments and customer communications."
+        },
+        {
+          title: "What is the Cybersecurity Outlook for 2025/26",
+          speaker: "Scott Williamson",
+          time: "1:00 PM - 1:50 PM",
+          description: "Emerging threats, regulatory shifts, and defense strategies shaping the next two years."
+        },
+        {
+          title: "Top 10 Cyber Security recommendations for Businesses Large and Small",
+          speaker: "Carl Mazzanti",
+          time: "2:00 PM - 2:50 PM",
+          description: "Essential guidance for protecting organizations against today's evolving digital threats."
+        },
+        {
+          title: "From Surveillance to Strategy: Unlocking Hidden Profits with Intelligent Video AI",
+          speaker: "George Karaolis", 
+          time: "3:00 PM - 3:50 PM",
+          description: "How modern surveillance technologies transform loss prevention and incident recovery."
+        }
+      ],
+      outcomes: [
+        "Implement comprehensive security frameworks",
+        "Reduce security incidents by 80%",
+        "Ensure regulatory compliance",
+        "Build incident response capabilities"
+      ]
     }
   ];
 
-  const tabs = [
-    { id: 'tracks', label: 'Tracks', icon: <Target className="w-4 h-4" /> },
-    { id: 'speakers', label: 'Speakers', icon: <Users className="w-4 h-4" /> },
-    { id: 'venue', label: 'Venue', icon: <MapPin className="w-4 h-4" /> },
-    { id: 'sponsors', label: 'Sponsors', icon: <Building className="w-4 h-4" /> }
+  const keynoteSpeeakers: Speaker[] = [
+    {
+      id: 'jack-alexy',
+      name: 'Jack Alexy',
+      title: 'Business Leader & Entrepreneur',
+      company: 'Technology Executive',
+      bio: 'Accomplished business leader with extensive experience in scaling technology companies.',
+      fullBio: 'Jack Alexy is a seasoned technology executive with over 20 years of experience leading digital transformation initiatives at Fortune 500 companies. His expertise spans strategic planning, operational excellence, and technology adoption. Jack has successfully led multiple organizations through complex technology implementations, resulting in improved efficiency and significant cost savings. He specializes in helping SMBs navigate the rapidly evolving technology landscape.',
+      expertise: ['Digital Transformation', 'Strategic Leadership', 'Technology Adoption', 'Business Strategy', 'Operational Excellence', 'Change Management'],
+      sessions: ['Keynote: Business Leadership Conversation'],
+      achievements: [
+        'Led digital transformation for 3 Fortune 500 companies',
+        'Reduced operational costs by 35% through technology optimization',
+        'Managed technology budgets exceeding $50M annually',
+        'Speaker at 25+ industry conferences'
+      ],
+      quote: "Technology isn't just about tools—it's about transforming how we think about business.",
+      image: '/jack.jpeg'
+    },
+    {
+      id: 'paul-centenari', 
+      name: 'Paul Centenari',
+      title: 'Serial Entrepreneur',
+      company: '3 Successful Exits',
+      bio: 'Serial entrepreneur who has built, scaled, and successfully sold three companies.',
+      fullBio: 'Paul Centenari is a proven serial entrepreneur with a track record of building and scaling technology companies from startup to successful exit. Having founded and sold three companies with combined valuations exceeding $200M, Paul brings unique insights into the challenges and opportunities facing growing businesses. His experience spans software development, digital marketing, and business strategy, with a particular focus on helping SMBs leverage technology for competitive advantage.',
+      expertise: ['Entrepreneurship', 'Business Growth', 'Technology Strategy', 'Exit Planning', 'Venture Capital', 'Scaling Operations'],
+      sessions: ['Keynote: Business Leadership Conversation'],
+      achievements: [
+        'Founded and sold 3 companies for $200M+ combined',
+        'Raised over $75M in venture capital funding',
+        'Created 500+ jobs across portfolio companies',
+        'Mentored 50+ startup founders'
+      ],
+      quote: "Every business challenge is an opportunity in disguise—technology just helps you see it faster.",
+      image: 'https://media.licdn.com/dms/image/v2/C5603AQEF7yxiQdlGOA/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1517695752385?e=1760572800&v=beta&t=mH-XOX2Zjk_EtrSESJUppn8udbvVJJr95mwXxGFxxzk'
+    }
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-light">
-      {/* Navigation */}
-      <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white/95 backdrop-blur-sm shadow-sm border-b border-slate-200' : 'bg-transparent'}`}>
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <div className="flex items-center space-x-8">
-              <img src="https://naspnet.org/wp-content/uploads/2022/09/eMazzanti-logo.png" alt="eMazzanti Technologies" className="h-8" />
-              <div className="hidden md:flex items-center space-x-2 text-sm text-slate-600">
-                <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
-                <span>Formerly 23 Years of Learning</span>
-              </div>
-            </div>
+    <div className="min-h-screen bg-white font-roboto">
+      
+      {/* Hero Section */}
+      <section className="py-20 px-6 bg-gradient-to-br from-slate-50 to-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             
-            <div className="hidden lg:flex items-center space-x-8">
-              {['Tracks', 'Speakers', 'Venue', 'Sponsors'].map((item) => (
-                <button
-                  key={item}
-                  onClick={() => setActiveTab(item.toLowerCase())}
-                  className="text-slate-700 hover:text-blue-600 transition-colors duration-200 font-medium"
-                >
-                  {item}
-                </button>
-              ))}
-              <button className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium">
-                Register Now
-              </button>
-            </div>
-
-            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="lg:hidden">
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
-          </div>
-        </div>
-      </nav>
-
-      {/* Section 1: Hero with Event Details */}
-      <section className="relative min-h-screen flex items-center justify-center px-6 pt-20 bg-white">
-        {/* Subtle Background Elements */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-40 left-10 w-32 h-32 border border-slate-200 rotate-45 opacity-20"></div>
-          <div className="absolute bottom-40 right-20 w-24 h-24 border border-slate-300 rotate-12 opacity-30"></div>
-          <div className="absolute top-1/3 right-1/4 w-16 h-16 bg-blue-100 rotate-45 opacity-40"></div>
-        </div>
-
-        <div className="relative z-10 max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* Left: Main Content */}
-            <div>
-              {/* Year Badge */}
-              <div className="inline-flex items-center space-x-4 mb-8 px-6 py-3 bg-slate-100 rounded-xl border border-slate-200">
-                <span className="text-4xl font-thin text-slate-800">2025</span>
-                <div className="h-8 w-px bg-slate-300"></div>
-                <div>
-                  <div className="text-blue-600 font-semibold text-lg">ASPIRE</div>
-                  <div className="text-slate-600 text-sm">Conference & Workshops</div>
-                </div>
+            {/* Left Content */}
+            <div className="space-y-5">
+              {/* Logo Section */}
+              <div className="flex items-center space-x-14">
+                <img 
+                  src="/Screenshot_2025-09-12_at_23.22.22-removebg-preview.png" 
+                  alt="ASPIRE 2025" 
+                  className="h-24 w-auto"
+                />
+                
               </div>
 
-              <h1 className="mb-6">
-                <span className="block text-6xl sm:text-7xl font-thin text-slate-800 mb-2 tracking-tight">
-                  ASPIRE
-                </span>
-                <span className="block text-2xl font-light text-slate-600 tracking-wide">
+              {/* Headline */}
+              <div>
+                <h1 className="text-4xl lg:text-5xl font-light text-gray-900 leading-tight mb-6 font-roboto">
                   Transform Your Business Through Technology
-                </span>
-              </h1>
+                </h1>
+                <p className="text-xl text-gray-700 leading-relaxed font-roboto">
+                  One-day conference for SMB leaders featuring <strong>24 expert sessions</strong> across 
+                  <strong> four strategic tracks</strong>. Join <strong>400+ business executives</strong> at 
+                  Microsoft Technology Center, NYC.
+                </p>
+              </div>
 
-              <p className="text-xl text-slate-700 mb-8 leading-relaxed">
-                One-day conference for SMB leaders featuring 24 expert sessions across four strategic tracks. 
-                Join 400+ business executives at Microsoft Technology Center, NYC.
-              </p>
-
-              {/* Key Stats */}
-              <div className="grid grid-cols-3 gap-4 mb-8">
+              {/* Stats */}
+              <div className="grid grid-cols-3 gap-6">
                 {[
-                  { num: '24', label: 'Sessions' },
-                  { num: '4', label: 'Tracks' },
-                  { num: '400', label: 'Leaders' }
+                  { num: '24', label: 'Sessions', color: '#B61BFD' },
+                  { num: '4', label: 'Tracks', color: '#3C1AF9' },
+                  { num: '200', label: 'Attendees', color: '#2EA1ED' }
                 ].map((stat, i) => (
-                  <div key={i} className="text-center p-4 bg-slate-100 rounded-lg">
-                    <div className="text-3xl font-thin text-blue-600 mb-1">{stat.num}</div>
-                    <div className="text-slate-600 text-sm">{stat.label}</div>
+                  <div key={i} className={`text-center p-6 bg-white rounded-2xl shadow-lg border border-gray-100 animate-fadeInUp delay-${(i + 1) * 100}`}>
+                    <div className="text-3xl font-bold mb-2 font-roboto" style={{color: stat.color}}>
+                      {stat.num}
+                    </div>
+                    <div className="text-gray-600 font-medium font-roboto">{stat.label}</div>
                   </div>
                 ))}
               </div>
 
               {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 mb-8">
-                <button className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium flex items-center justify-center">
-                  Register Now
-                  <ArrowRight className="ml-2 w-5 h-5" />
+              <div className="flex flex-col sm:flex-row gap-4">
+                <button 
+                  className="px-8 py-4 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 animate-fadeInUp delay-400 transform hover:scale-105 font-roboto"
+                  style={{background: 'linear-gradient(135deg, #3C1AF9, #B61BFD)'}}
+                  onClick={() => window.location.href = '/register'}
+                >
+                  <div className="flex items-center justify-center space-x-2">
+                    <span>Register Now</span>
+                    <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                  </div>
                 </button>
                 
-                <button className="px-8 py-3 border-2 border-slate-300 text-slate-700 rounded-lg hover:border-slate-400 transition-colors duration-200 font-medium flex items-center justify-center">
-                  <Play className="mr-2 w-5 h-5" />
-                  Watch Preview
+                <button className="px-8 py-4 border-2 border-gray-300 text-gray-700 font-semibold rounded-xl hover:border-gray-400 hover:bg-gray-50 transition-all duration-300 animate-fadeInUp delay-500 transform hover:scale-105 font-roboto">
+                  <div className="flex items-center justify-center space-x-2">
+                    <Play className="w-5 h-5" />
+                    <span>Watch Preview</span>
+                  </div>
                 </button>
               </div>
             </div>
 
-            {/* Right: Event Details Card */}
-            <div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-lg">
+            {/* Right - Event Details */}
+            <div className="bg-white rounded-3xl p-6 shadow-xl border border-gray-100 animate-float">
               <div className="text-center mb-6">
-                <span className="px-4 py-2 bg-red-100 text-red-700 rounded-full text-sm font-medium">
-                  LIMITED SEATING AVAILABLE
+                <span className="bg-red-100 text-red-700 px-4 py-2 rounded-full text-sm font-bold animate-bounce-slow font-roboto">
+                  LIMITED SEATING
                 </span>
               </div>
 
-              <div className="space-y-4 mb-6">
-                <div className="flex items-center space-x-4 p-4 bg-slate-50 rounded-lg">
-                  <Calendar className="w-6 h-6 text-blue-600" />
+              <div className="space-y-6 mb-6">
+                <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-xl animate-fadeInUp delay-100">
+                  <Calendar className="w-5 h-5" style={{color: '#2EA1ED'}} />
                   <div>
-                    <div className="font-semibold text-slate-800">October 15, 2025</div>
-                    <div className="text-slate-600 text-sm">9:00 AM - 5:00 PM EST</div>
+                    <div className="font-bold text-gray-900 font-roboto">October 15, 2025</div>
+                    <div className="text-gray-600 text-sm font-roboto">9:00 AM - 5:00 PM EST</div>
                   </div>
                 </div>
                 
-                <div className="flex items-center space-x-4 p-4 bg-slate-50 rounded-lg">
-                  <MapPin className="w-6 h-6 text-blue-600" />
+                <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-xl animate-fadeInUp delay-200">
+                  <MapPin className="w-5 h-5" style={{color: '#2EA1ED'}} />
                   <div>
-                    <div className="font-semibold text-slate-800">Microsoft Technology Center</div>
-                    <div className="text-slate-600 text-sm">Times Square, New York City</div>
+                    <div className="font-bold text-gray-900 font-roboto">Microsoft Technology Center</div>
+                    <div className="text-gray-600 text-sm font-roboto">Times Square, NYC</div>
                   </div>
                 </div>
                 
-                <div className="flex items-center space-x-4 p-4 bg-slate-50 rounded-lg">
-                  <Users className="w-6 h-6 text-blue-600" />
+                <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-xl animate-fadeInUp delay-300">
+                  <Users className="w-5 h-5" style={{color: '#2EA1ED'}} />
                   <div>
-                    <div className="font-semibold text-slate-800">Networking Reception</div>
-                    <div className="text-slate-600 text-sm">5:30 PM - 7:30 PM (Following conference)</div>
+                    <div className="font-bold text-gray-900 font-roboto">Networking Reception</div>
+                    <div className="text-gray-600 text-sm font-roboto">5:30 PM - 7:30 PM</div>
                   </div>
                 </div>
               </div>
 
-              {/* Keynote Speaker */}
-              <div className="border-t border-slate-200 pt-6">
+              {/* Keynote Speakers */}
+              <div className="border-t border-gray-200 pt-6">
                 <div className="text-center mb-4">
-                  <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
-                    KEYNOTE SPEAKER
+                  <span 
+                    className="px-4 py-2 rounded-full text-sm font-bold border animate-fadeInUp delay-400 font-roboto"
+                    style={{
+                      background: 'rgba(60, 26, 249, 0.1)',
+                      color: '#3C1AF9', 
+                      borderColor: 'rgba(60, 26, 249, 0.3)'
+                    }}
+                  >
+                    KEYNOTE SPEAKERS
                   </span>
                 </div>
-                <div className="text-center">
-                  <h3 className="text-xl font-semibold text-slate-800 mb-2">Paul Centenari</h3>
-                  <p className="text-slate-600 text-sm">Serial entrepreneur with 3 successful exits</p>
+                
+                <div className="grid grid-cols-2 gap-3">
+                  {keynoteSpeeakers.map((speaker, index) => (
+                    <div 
+                      key={speaker.id}
+                      className={`bg-gray-50 rounded-xl p-3 cursor-pointer hover:bg-gray-100 transition-all duration-300 animate-fadeInUp delay-${500 + (index * 100)} transform hover:scale-105`}
+                      onClick={() => setSelectedSpeaker(speaker)}
+                    >
+                      <div className="text-center">
+                        <div className="w-12 h-12 rounded-xl mx-auto mb-2 overflow-hidden border-2" style={{borderColor: '#3C1AF9'}}>
+                          <img 
+                            src={speaker.image} 
+                            alt={speaker.name}
+                            className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
+                          />
+                        </div>
+                        <h4 className="font-bold text-gray-900 text-xs leading-tight font-roboto">{speaker.name}</h4>
+                        <p className="text-xs font-medium mt-1 font-roboto" style={{color: '#3C1AF9'}}>{speaker.title}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-4">
+                  <button 
+                    className="w-full py-3 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-300 animate-fadeInUp delay-700 transform hover:scale-105 font-roboto"
+                    style={{background: '#3C1AF9'}}
+                    onClick={() => window.location.href = '/register'}
+                  >
+                    Reserve Your Seat
+                  </button>
                 </div>
               </div>
             </div>
@@ -212,386 +456,497 @@ const App1 = () => {
         </div>
       </section>
 
-      {/* Section 2: Tabbed Content (Tracks, Speakers, Venue, Sponsors) */}
-      <section className="py-20 px-6 bg-slate-50">
+      {/* What's In It For You Section */}
+      <section className="py-20 px-6 bg-white">
+        <div className="max-w-6xl mx-auto text-center">
+          <h2 className="text-5xl lg:text-6xl font-light text-gray-900 mb-8 font-roboto">
+            What's in it for you?
+          </h2>
+          <p className="text-xl lg:text-2xl text-gray-600 leading-relaxed max-w-5xl mx-auto font-roboto">
+            Immediate ROI strategies, expert networking opportunities, competitive technology edge, 
+            and proven solutions you can implement Monday morning to transform your business.
+          </p>
+        </div>
+      </section>
+
+      {/* Our Proven 4-Track Approach */}
+      <section className="py-20 px-6 bg-gradient-to-br from-slate-50 to-white">
         <div className="max-w-7xl mx-auto">
-          {/* Tab Navigation */}
-          <div className="flex justify-center mb-12">
-            <div className="flex bg-white rounded-xl p-2 border border-slate-200 shadow-sm">
-              {tabs.map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center space-x-2 px-6 py-3 rounded-lg transition-all duration-200 font-medium ${
-                    activeTab === tab.id
-                      ? 'bg-blue-600 text-white shadow-sm'
-                      : 'text-slate-600 hover:text-slate-800 hover:bg-slate-50'
-                  }`}
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-light text-gray-900 mb-6 font-roboto">
+              Our proven <span style={{color: '#3C1AF9'}}>4-track</span> learning approach
+            </h2>
+            <p className="text-xl text-gray-600 max-w-4xl mx-auto font-roboto">
+              We don't waste your time. Every session is strategically designed, expertly delivered,
+              and continuously optimized for maximum business impact.
+            </p>
+          </div>
+
+          {/* Visual Process Flow */}
+          <div className="relative mb-16">
+            <div 
+              className="absolute top-1/2 left-0 right-0 h-1 transform -translate-y-1/2 hidden lg:block"
+              style={{ background: 'linear-gradient(90deg, #3C1AF9 0%, #1DC5AC 100%)' }}
+            />
+            
+            <div className="grid lg:grid-cols-4 gap-8 relative">
+              {tracks.map((track, index) => (
+                <div 
+                  key={track.id}
+                  className="relative animate-fadeInUp cursor-pointer"
+                  style={{animationDelay: `${index * 200}ms`}}
+                  onClick={() => setSelectedTrack(track)}
                 >
-                  {tab.icon}
-                  <span>{tab.label}</span>
-                </button>
+                  {/* Phase Circle */}
+                  <div className="relative mb-8 mx-auto w-16 h-16 lg:w-20 lg:h-20">
+                    <div 
+                      className="w-full h-full rounded-full flex items-center justify-center shadow-2xl relative z-10 text-white hover:scale-110 transition-all duration-300"
+                      style={{backgroundColor: track.color}}
+                    >
+                      {track.icon}
+                    </div>
+                    <div className="absolute -bottom-1 -right-1 bg-white rounded-full w-6 h-6 flex items-center justify-center shadow-lg">
+                      <span className="text-xs font-bold text-gray-700 font-roboto">0{track.id}</span>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-white rounded-3xl p-6 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
+                    <h3 className="text-xl font-light text-gray-900 mb-3 font-roboto">
+                      {track.title}
+                    </h3>
+                    <p className="text-gray-600 leading-relaxed mb-4 font-roboto">
+                      {track.description}
+                    </p>
+                    
+                    <div className="mb-4">
+                      <div className="text-sm font-light mb-2 font-roboto" style={{ color: track.color }}>
+                        Key Focus: {track.keyTopics[0]} & {track.keyTopics[1]}
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      {track.keyTopics.slice(0, 3).map((topic, i) => (
+                        <div key={i} className="flex items-center space-x-2">
+                          <CheckCircle className="w-4 h-4" style={{color: track.color}} />
+                          <span className="text-sm text-gray-600 font-roboto">{topic}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="flex items-center justify-between pt-4 border-t border-gray-200 mt-4">
+                      <span className="text-gray-600 font-light text-sm font-roboto">{track.sessions?.length || 0} Expert Sessions</span>
+                      <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-gray-600 group-hover:translate-x-1 transition-all duration-300" />
+                    </div>
+                  </div>
+                </div>
               ))}
             </div>
           </div>
 
-          {/* Tab Content */}
-          <div className="min-h-[600px]">
-            {/* Tracks Tab */}
-            {activeTab === 'tracks' && (
-              <div>
-                <div className="text-center mb-12">
-                  <h2 className="text-4xl font-thin text-slate-800 mb-4">Four Strategic Tracks</h2>
-                  <p className="text-xl text-slate-600">Tailored learning paths for immediate business impact</p>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {tracks.map((track) => (
-                    <div key={track.id} className="bg-white border border-slate-200 rounded-xl p-6 hover:shadow-lg transition-all duration-300">
-                      <div className="flex items-start space-x-4 mb-4">
-                        <div className={`p-3 rounded-lg bg-gradient-to-r ${track.color} text-white`}>
-                          {track.icon}
-                        </div>
-                        <div className="flex-1">
-                          <h3 className="text-xl font-semibold text-slate-800 mb-2">{track.title}</h3>
-                          <p className="text-slate-600 text-sm">{track.description}</p>
-                        </div>
-                      </div>
-                      
-                      <div className="flex flex-wrap gap-2 mb-4">
-                        {track.topics.map((topic, i) => (
-                          <span key={i} className="px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-xs">
-                            {topic}
-                          </span>
-                        ))}
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <span className="text-slate-500 text-sm">{track.sessions} Sessions</span>
-                        <ChevronRight className="w-5 h-5 text-slate-400" />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Speakers Tab */}
-            {activeTab === 'speakers' && (
-              <div>
-                <div className="text-center mb-12">
-                  <h2 className="text-4xl font-thin text-slate-800 mb-4">Expert Speakers</h2>
-                  <p className="text-xl text-slate-600">Industry leaders and technology experts</p>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {/* Keynote Speaker - Featured */}
-                  <div className="md:col-span-2 lg:col-span-3 bg-white border border-slate-200 rounded-xl p-8">
-                    <div className="flex items-center space-x-6">
-                      <div className="w-24 h-24 bg-gradient-to-br from-blue-100 to-purple-100 rounded-xl flex items-center justify-center">
-                        <Users className="w-12 h-12 text-blue-600" />
-                      </div>
-                      <div className="flex-1">
-                        <div className="inline-block mb-2">
-                          <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
-                            KEYNOTE SPEAKER
-                          </span>
-                        </div>
-                        <h3 className="text-2xl font-semibold text-slate-800 mb-2">Paul Centenari</h3>
-                        <p className="text-slate-600 mb-4">
-                          Serial entrepreneur who has built, scaled, and successfully sold three companies. 
-                          Paul will share insights on resilience, strategic decision-making, and leveraging technology for rapid business growth.
-                        </p>
-                        <div className="flex flex-wrap gap-2">
-                          <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm">3 Successful Exits</span>
-                          <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm">Technology Expert</span>
-                          <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm">Growth Strategist</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* Additional Speakers Placeholder */}
-                  {[1, 2, 3, 4, 5, 6].map((i) => (
-                    <div key={i} className="bg-white border border-slate-200 rounded-xl p-6 text-center">
-                      <div className="w-16 h-16 bg-slate-100 rounded-xl mx-auto mb-4 flex items-center justify-center">
-                        <Users className="w-8 h-8 text-slate-400" />
-                      </div>
-                      <h4 className="font-semibold text-slate-800 mb-2">Track {Math.ceil(i/1.5)} Speaker</h4>
-                      <p className="text-slate-600 text-sm">Industry Expert</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Venue Tab */}
-            {activeTab === 'venue' && (
-              <div>
-                <div className="text-center mb-12">
-                  <h2 className="text-4xl font-thin text-slate-800 mb-4">Microsoft Technology Center</h2>
-                  <p className="text-xl text-slate-600">Prime location in the heart of Times Square</p>
-                </div>
-                
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                  <div className="space-y-6">
-                    <div className="bg-white border border-slate-200 rounded-xl p-6">
-                      <div className="flex items-start space-x-4">
-                        <Building className="w-6 h-6 text-blue-600 mt-1" />
-                        <div>
-                          <h4 className="font-semibold text-slate-800 mb-2">Conference Venue</h4>
-                          <p className="text-slate-600 mb-1">Microsoft Technology Center</p>
-                          <p className="text-slate-600 mb-1">11 Times Square, New York, NY 10036</p>
-                          <p className="text-slate-600">9:00 AM - 5:00 PM EST</p>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="bg-white border border-slate-200 rounded-xl p-6">
-                      <div className="flex items-start space-x-4">
-                        <Users className="w-6 h-6 text-purple-600 mt-1" />
-                        <div>
-                          <h4 className="font-semibold text-slate-800 mb-2">Networking Reception</h4>
-                          <p className="text-slate-600 mb-1">Immediately following conference</p>
-                          <p className="text-slate-600">5:30 PM - 7:30 PM</p>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="bg-white border border-slate-200 rounded-xl p-6">
-                      <div className="flex items-start space-x-4">
-                        <MapPin className="w-6 h-6 text-green-600 mt-1" />
-                        <div>
-                          <h4 className="font-semibold text-slate-800 mb-2">Transportation</h4>
-                          <p className="text-slate-600 mb-1">Subway: Times Sq-42 St Station</p>
-                          <p className="text-slate-600">Multiple parking options nearby</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="bg-white border border-slate-200 rounded-xl p-6">
-                    <div className="aspect-video bg-slate-100 rounded-lg flex items-center justify-center mb-4">
-                      <MapPin className="w-12 h-12 text-blue-600" />
-                    </div>
-                    <div className="text-center">
-                      <button className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium">
-                        Get Directions
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Sponsors Tab */}
-            {activeTab === 'sponsors' && (
-              <div>
-                <div className="text-center mb-12">
-                  <h2 className="text-4xl font-thin text-slate-800 mb-4">Event Partners</h2>
-                  <p className="text-xl text-slate-600">Industry leaders supporting SMB innovation</p>
-                </div>
-                
-                <div className="space-y-12">
-                  {/* Platinum */}
-                  <div className="text-center">
-                    <div className="inline-block mb-6">
-                      <span className="px-6 py-2 bg-slate-800 text-white rounded-full text-sm font-medium tracking-wide">
-                        PLATINUM PARTNER
-                      </span>
-                    </div>
-                    <div className="bg-white border border-slate-200 rounded-xl p-12 shadow-sm max-w-md mx-auto">
-                      <img 
-                        src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Microsoft_logo_%282012%29.svg/2560px-Microsoft_logo_%282012%29.svg.png"
-                        alt="Microsoft"
-                        className="h-16 mx-auto" 
-                      />
-                    </div>
-                  </div>
-
-                  {/* Gold */}
-                  <div className="text-center">
-                    <div className="inline-block mb-6">
-                      <span className="px-4 py-1 bg-yellow-100 text-yellow-700 rounded-full text-sm font-medium">
-                        GOLD SPONSORS
-                      </span>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-                      <div className="bg-white border border-slate-200 rounded-xl p-8 h-32 flex items-center justify-center">
-                        <span className="text-slate-600 font-medium">WatchGuard Technologies</span>
-                      </div>
-                      <div className="bg-white border border-slate-200 rounded-xl p-8 h-32 flex items-center justify-center">
-                        <span className="text-slate-600 font-medium">EOS Worldwide</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Partnership CTA */}
-                  <div className="text-center">
-                    <div className="inline-block bg-white border border-slate-200 rounded-xl p-8 max-w-md mx-auto">
-                      <Building className="w-12 h-12 text-blue-600 mx-auto mb-4" />
-                      <h3 className="text-xl font-semibold text-slate-800 mb-4">Partner With Us</h3>
-                      <p className="text-slate-600 mb-6">Join industry leaders supporting SMB technology advancement</p>
-                      <button className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium">
-                        Partnership Information
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
+          <div className="text-center">
+            <div className="inline-flex items-center space-x-2 text-gray-600 bg-white rounded-full px-6 py-3 shadow-lg border border-gray-100">
+              <Users className="w-5 h-5" />
+              <span className="font-light font-roboto">Mix and match sessions across all tracks</span>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Section 3: Registration */}
+      {/* Final CTA */}
       <section className="py-20 px-6 bg-white">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-5xl font-thin text-slate-800 mb-4">Secure Your Spot</h2>
-            <p className="text-xl text-slate-600 mb-6">Join 400+ business leaders transforming their organizations</p>
-            <div className="inline-block">
-              <span className="px-4 py-2 bg-green-100 text-green-700 rounded-full text-sm font-medium">
-                ✓ Complimentary Admission  ✓ Lunch Included  ✓ Networking Reception  ✓ Certificate
-              </span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            {/* Registration Form */}
-            <div className="bg-slate-50 border border-slate-200 rounded-xl p-8">
-              <form className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <input
-                    type="text"
-                    placeholder="First Name"
-                    className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors duration-200"
-                  />
-                  <input
-                    type="text"
-                    placeholder="Last Name"
-                    className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors duration-200"
-                  />
+        <div className="max-w-4xl mx-auto text-center">
+          <div className="bg-gradient-to-br from-gray-50 to-white rounded-3xl p-16 shadow-xl border border-gray-100">
+            <h2 className="text-5xl font-light text-gray-900 mb-8 font-roboto">Ready to Transform Your Business?</h2>
+            <p className="text-xl text-gray-700 mb-12 font-roboto">
+              Join 400+ business leaders for a day of learning, networking, and growth 
+              at Microsoft Technology Center.
+            </p>
+            
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+              {[
+                '✓ Complimentary Admission',
+                '✓ Lunch Included',
+                '✓ Networking Reception', 
+                '✓ Digital Resources'
+              ].map((feature, i) => (
+                <div key={i} className="bg-green-50 rounded-2xl p-4 border border-green-200">
+                  <span className="text-emerald-700 font-light text-sm font-roboto">{feature}</span>
                 </div>
-                
-                <input
-                  type="email"
-                  placeholder="Business Email"
-                  className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors duration-200"
-                />
-                
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <input
-                    type="text"
-                    placeholder="Company"
-                    className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors duration-200"
-                  />
-                  <input
-                    type="text"
-                    placeholder="Job Title"
-                    className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors duration-200"
-                  />
-                </div>
-
-                <button type="submit" className="w-full bg-blue-600 text-white rounded-lg px-8 py-4 hover:bg-blue-700 transition-colors duration-200 font-medium text-lg flex items-center justify-center">
-                  Complete Registration
-                  <CheckCircle className="ml-3 w-5 h-5" />
-                </button>
-
-                <p className="text-center text-slate-500 text-sm flex items-center justify-center">
-                  <Lock className="w-4 h-4 mr-2" />
-                  Secure registration powered by eMazzanti Technologies
-                </p>
-              </form>
+              ))}
             </div>
 
-            {/* Registration Benefits */}
-            <div className="space-y-6">
-              <div>
-                <h3 className="text-2xl font-semibold text-slate-800 mb-4">What's Included</h3>
-                <div className="space-y-3">
-                  {[
-                    'Access to all 24 expert sessions',
-                    'Keynote presentation by Paul Centenari',
-                    'Networking reception with industry leaders',
-                    'Lunch and refreshments throughout the day',
-                    'Digital resource library and materials',
-                    'Certificate of attendance'
-                  ].map((item, i) => (
-                    <div key={i} className="flex items-center space-x-3">
-                      <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
-                      <span className="text-slate-700">{item}</span>
-                    </div>
-                  ))}
+            <div className="flex flex-col sm:flex-row gap-6 justify-center">
+              <button 
+                className="px-12 py-4 text-white text-xl font-light rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 font-roboto"
+                style={{background: 'linear-gradient(135deg, #3C1AF9, #B61BFD)'}}
+                onClick={() => window.location.href = '/register'}
+              >
+                <div className="flex items-center justify-center space-x-3">
+                  <span>Register Now - It's Free</span>
+                  <CheckCircle className="w-6 h-6" />
                 </div>
-              </div>
-
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-                <h4 className="font-semibold text-blue-800 mb-2">Perfect For:</h4>
-                <ul className="text-blue-700 text-sm space-y-1">
-                  <li>• Small and midsize business owners</li>
-                  <li>• CEOs, COOs, and CFOs</li>
-                  <li>• IT directors and technology decision-makers</li>
-                  <li>• Business leaders focused on growth and efficiency</li>
-                </ul>
-              </div>
+              </button>
+              
+              <button className="px-12 py-4 border-2 border-gray-300 text-gray-700 text-xl font-light rounded-2xl hover:border-gray-400 hover:bg-gray-50 transition-all duration-300 font-roboto">
+                <div className="flex items-center justify-center space-x-3">
+                  <span>View Agenda</span>
+                  <Calendar className="w-6 h-6" />
+                </div>
+              </button>
             </div>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-6 bg-slate-900 text-white">
+      <footer className="py-16 px-6 bg-gray-900 text-white">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             <div>
-              <img src="https://naspnet.org/wp-content/uploads/2022/09/eMazzanti-logo.png" alt="eMazzanti Technologies" className="h-8 brightness-0 invert mb-4" />
-              <p className="text-slate-400 text-sm">
-                Transforming businesses through technology innovation since 2001.
+              <h3 className="text-2xl font-light mb-4 font-roboto">ASPIRE 2025</h3>
+              <p className="text-gray-400 font-roboto">
+                Transforming businesses through technology innovation.
               </p>
             </div>
             
             <div>
-              <h4 className="font-semibold mb-3 text-white">Contact</h4>
-              <ul className="space-y-1 text-slate-400 text-sm">
-                <li>aspire@emazzanti.net</li>
-                <li>+1 (844) 360-4400</li>
-                <li>New York, NY</li>
-              </ul>
+              <h4 className="font-light mb-4 font-roboto">Contact</h4>
+              <div className="space-y-2 text-gray-400">
+                <p className="font-roboto">aspire@emazzanti.net</p>
+                <p className="font-roboto">+1 (844) 360-4400</p>
+                <p className="font-roboto">New York, NY</p>
+              </div>
             </div>
             
             <div>
-              <h4 className="font-semibold mb-3 text-white">Quick Links</h4>
-              <ul className="space-y-1">
-                {['Agenda', 'Speakers', 'Venue', 'Sponsors'].map((link) => (
-                  <li key={link}>
-                    <button onClick={() => setActiveTab(link.toLowerCase())} className="text-slate-400 hover:text-white transition-colors duration-200 text-sm">
+              <h4 className="font-light mb-4 font-roboto">Quick Links</h4>
+              <div className="space-y-2">
+                {['Tracks', 'Agenda', 'Speakers', 'Venue'].map((link) => (
+                  <p key={link}>
+                    <button className="text-gray-400 hover:text-white transition-colors font-roboto">
                       {link}
                     </button>
-                  </li>
+                  </p>
                 ))}
-              </ul>
+              </div>
             </div>
             
             <div>
-              <h4 className="font-semibold mb-3 text-white">Follow Us</h4>
+              <h4 className="font-light mb-4 font-roboto">Follow Us</h4>
               <div className="flex space-x-3">
                 {['LinkedIn', 'Twitter'].map((social) => (
-                  <button key={social} className="w-8 h-8 bg-slate-800 rounded-lg flex items-center justify-center hover:bg-slate-700 transition-colors duration-200">
-                    <span className="text-xs font-semibold">{social[0]}</span>
+                  <button key={social} className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-gray-700 transition-colors">
+                    <span className="text-sm font-light font-roboto">{social[0]}</span>
                   </button>
                 ))}
               </div>
             </div>
           </div>
           
-          <div className="pt-6 border-t border-slate-800 text-center text-slate-400 text-sm">
-            <p>&copy; 2025 eMazzanti Technologies. All rights reserved.</p>
+          <div className="pt-8 border-t border-gray-800 text-center text-gray-400">
+            <p className="font-roboto">&copy; 2025 eMazzanti Technologies. All rights reserved.</p>
           </div>
         </div>
       </footer>
+
+      {/* Modals */}
+      {selectedTrack && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-3xl p-8 max-w-6xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-start mb-8">
+              <div className="flex items-center space-x-4">
+                <div 
+                  className="p-4 rounded-xl text-white shadow-lg"
+                  style={{backgroundColor: selectedTrack.color}}
+                >
+                  {selectedTrack.icon}
+                </div>
+                <div>
+                  <h3 className="text-4xl font-light text-gray-900 font-roboto">{selectedTrack.title}</h3>
+                  <p className="text-gray-600 font-roboto">{selectedTrack.sessions?.length || 0} Expert Sessions</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setSelectedTrack(null)}
+                className="text-gray-400 hover:text-gray-600 p-2"
+              >
+                <X className="w-8 h-8" />
+              </button>
+            </div>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+              {/* Left Column */}
+              <div className="space-y-6">
+                <div>
+                  <h4 className="text-2xl font-light text-gray-900 mb-4 font-roboto">Track Overview</h4>
+                  <p className="text-gray-700 leading-relaxed font-roboto text-lg">{selectedTrack.fullDescription}</p>
+                </div>
+
+                <div>
+                  <h4 className="text-2xl font-light text-gray-900 mb-4 font-roboto">What You'll Achieve</h4>
+                  <div className="space-y-3">
+                    {selectedTrack.outcomes?.map((outcome, i) => (
+                      <div key={i} className="flex items-start space-x-3 bg-green-50 rounded-2xl p-4 border border-green-200">
+                        <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0" style={{color: '#1DC5AC'}} />
+                        <span className="text-gray-700 font-roboto">{outcome}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="text-2xl font-light text-gray-900 mb-4 font-roboto">Key Topics Covered</h4>
+                  <div className="flex flex-wrap gap-3">
+                    {selectedTrack.keyTopics?.map((topic, i) => (
+                      <span key={i} className="px-4 py-2 bg-gray-100 text-gray-700 rounded-full font-roboto font-light">
+                        {topic}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column - Sessions */}
+              <div>
+                <h4 className="text-2xl font-light text-gray-900 mb-4 font-roboto">Session Schedule</h4>
+                <div className="space-y-4">
+                  {selectedTrack.sessions?.map((session, i) => (
+                    <div key={i} className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
+                      <div className="flex items-start justify-between mb-3">
+                        <h5 className="font-light text-gray-900 font-roboto text-lg leading-tight">{session.title}</h5>
+                        <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-roboto font-light">
+                          {session.time}
+                        </span>
+                      </div>
+                      <p className="text-sm font-light mb-2 font-roboto" style={{color: selectedTrack.color}}>
+                        Speaker: {session.speaker}
+                      </p>
+                      <p className="text-gray-600 text-sm leading-relaxed font-roboto">
+                        {session.description}
+                      </p>
+                    </div>
+                  )) || <p className="text-gray-500 font-roboto">No sessions available</p>}
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex space-x-4 pt-6 border-t border-gray-200">
+              <button 
+                className="flex-1 py-4 text-white font-light rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 font-roboto text-lg"
+                style={{backgroundColor: selectedTrack.color}}
+                onClick={() => window.location.href = '/register'}
+              >
+                Register for This Track
+              </button>
+              <button 
+                className="px-8 py-4 border-2 border-gray-300 text-gray-700 font-light rounded-2xl hover:border-gray-400 hover:bg-gray-50 transition-all duration-300 font-roboto"
+                onClick={() => setSelectedTrack(null)}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {selectedSpeaker && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-3xl p-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto animate-modalSlideIn">
+            <div className="flex justify-between items-start mb-8">
+              <div className="flex items-start space-x-6">
+                <div className="w-32 h-32 rounded-3xl overflow-hidden border-4 shadow-xl" style={{borderColor: '#3C1AF9'}}>
+                  <img 
+                    src={selectedSpeaker.image} 
+                    alt={selectedSpeaker.name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div>
+                  <h3 className="text-3xl font-light text-gray-900 mb-2 font-roboto">{selectedSpeaker.name}</h3>
+                  <p className="text-xl font-light mb-2 font-roboto" style={{color: '#3C1AF9'}}>{selectedSpeaker.title}</p>
+                  <p className="text-gray-600 text-lg mb-4 font-roboto">{selectedSpeaker.company}</p>
+                  <div className="bg-gray-50 rounded-2xl p-4 border-l-4" style={{borderColor: '#3C1AF9'}}>
+                    <p className="text-gray-700 italic text-lg font-roboto">"{selectedSpeaker.quote}"</p>
+                  </div>
+                </div>
+              </div>
+              <button
+                onClick={() => setSelectedSpeaker(null)}
+                className="text-gray-400 hover:text-gray-600 p-3 hover:bg-gray-100 rounded-2xl transition-colors"
+              >
+                <X className="w-8 h-8" />
+              </button>
+            </div>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* Left Column */}
+              <div className="space-y-6">
+                <div>
+                  <h4 className="text-xl font-light text-gray-900 mb-4 font-roboto">Biography</h4>
+                  <p className="text-gray-700 leading-relaxed font-roboto">{selectedSpeaker.fullBio}</p>
+                </div>
+                
+                <div>
+                  <h4 className="text-xl font-light text-gray-900 mb-4 font-roboto">Conference Sessions</h4>
+                  <div className="space-y-3">
+                    {selectedSpeaker.sessions?.map((session, i) => (
+                      <div key={i} className="flex items-start space-x-3 bg-blue-50 rounded-2xl p-4 border border-blue-200">
+                        <div className="w-2 h-2 rounded-full mt-2 flex-shrink-0" style={{backgroundColor: '#3C1AF9'}}></div>
+                        <span className="text-gray-800 font-light font-roboto">{session}</span>
+                      </div>
+                    )) || <p className="text-gray-500 font-roboto">No sessions available</p>}
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column */}
+              <div className="space-y-6">
+                <div>
+                  <h4 className="text-xl font-light text-gray-900 mb-4 font-roboto">Areas of Expertise</h4>
+                  <div className="grid grid-cols-2 gap-3">
+                    {selectedSpeaker.expertise?.map((skill, i) => (
+                      <div key={i} className="bg-gray-100 rounded-xl p-3 text-center">
+                        <span className="text-gray-700 font-light text-sm font-roboto">{skill}</span>
+                      </div>
+                    )) || <p className="text-gray-500 font-roboto">No expertise available</p>}
+                  </div>
+                </div>
+                
+                <div>
+                  <h4 className="text-xl font-light text-gray-900 mb-4 font-roboto">Key Achievements</h4>
+                  <div className="space-y-3">
+                    {selectedSpeaker.achievements?.map((achievement, i) => (
+                      <div key={i} className="flex items-start space-x-3">
+                        <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0" style={{color: '#1DC5AC'}} />
+                        <span className="text-gray-700 font-roboto">{achievement}</span>
+                      </div>
+                    )) || <p className="text-gray-500 font-roboto">No achievements available</p>}
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex space-x-4 mt-8 pt-8 border-t border-gray-200">
+              <button 
+                className="flex-1 py-4 text-white font-light rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 font-roboto"
+                style={{background: 'linear-gradient(135deg, #3C1AF9, #B61BFD)'}}
+                onClick={() => window.location.href = '/register'}
+              >
+                Register to See This Speaker
+              </button>
+              <button 
+                className="px-8 py-4 border-2 border-gray-300 text-gray-700 font-light rounded-2xl hover:border-gray-400 hover:bg-gray-50 transition-all duration-300 font-roboto"
+                onClick={() => setSelectedSpeaker(null)}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <style>
+        {`
+          @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap');
+          .font-roboto { font-family: 'Roboto', sans-serif; }
+          
+          @keyframes fadeInUp {
+            from {
+              opacity: 0;
+              transform: translateY(30px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+          
+          @keyframes slideInUp {
+            from {
+              opacity: 0;
+              transform: translateY(50px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+          
+          @keyframes modalSlideIn {
+            from {
+              opacity: 0;
+              transform: scale(0.9) translateY(20px);
+            }
+            to {
+              opacity: 1;
+              transform: scale(1) translateY(0);
+            }
+          }
+          
+          @keyframes pulse {
+            0%, 100% {
+              transform: scale(1);
+            }
+            50% {
+              transform: scale(1.05);
+            }
+          }
+          
+          @keyframes bounce {
+            0%, 20%, 53%, 80%, 100% {
+              transform: translateY(0);
+            }
+            40%, 43% {
+              transform: translateY(-10px);
+            }
+            70% {
+              transform: translateY(-5px);
+            }
+          }
+          
+          @keyframes float {
+            0%, 100% {
+              transform: translateY(0px);
+            }
+            50% {
+              transform: translateY(-10px);
+            }
+          }
+          
+          .animate-fadeInUp {
+            animation: fadeInUp 0.8s ease-out forwards;
+            opacity: 0;
+          }
+          
+          .animate-slideInUp {
+            animation: slideInUp 0.8s ease-out forwards;
+            opacity: 0;
+          }
+          
+          .animate-modalSlideIn {
+            animation: modalSlideIn 0.3s ease-out forwards;
+          }
+          
+          .animate-bounce-slow {
+            animation: bounce 2s infinite;
+          }
+          
+          .animate-float {
+            animation: float 3s ease-in-out infinite;
+          }
+          
+          /* Stagger animation delays */
+          .delay-100 { animation-delay: 100ms; }
+          .delay-200 { animation-delay: 200ms; }
+          .delay-300 { animation-delay: 300ms; }
+          .delay-400 { animation-delay: 400ms; }
+          .delay-500 { animation-delay: 500ms; }
+          .delay-600 { animation-delay: 600ms; }
+          .delay-700 { animation-delay: 700ms; }
+        `}
+      </style>
     </div>
   );
 };
 
-export default App1;
+export default HomePage;
