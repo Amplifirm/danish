@@ -4,16 +4,17 @@ import { Menu, X, User, LogOut, LogIn, UserPlus, Calendar } from 'lucide-react';
 
 // Define the User type
 interface UserType {
+  id: string;
   firstName: string;
   lastName: string;
   email: string;
-  registeredSessions?: string[] | any[]; // Adjust the array type based on your session object structure
+  registeredSessions?: any[];
 }
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [user, setUser] = useState<UserType | null>(null); // Properly typed user state
+  const [user, setUser] = useState<UserType | null>(null);
   const [registeredSessions, setRegisteredSessions] = useState<any[]>([]);
   const location = useLocation();
   const navigate = useNavigate();
@@ -27,14 +28,22 @@ const Navbar = () => {
   }, []);
 
   useEffect(() => {
-    // Check authentication status
+    // Check authentication status - only need user data now (no token for table auth)
     const userData = localStorage.getItem('user');
-    const token = localStorage.getItem('token');
     
-    if (userData && token) {
-      const parsedUser: UserType = JSON.parse(userData);
-      setUser(parsedUser);
-      setRegisteredSessions(parsedUser.registeredSessions || []);
+    if (userData) {
+      try {
+        const parsedUser: UserType = JSON.parse(userData);
+        setUser(parsedUser);
+        setRegisteredSessions(parsedUser.registeredSessions || []);
+        console.log('Navbar loaded user:', parsedUser);
+      } catch (error) {
+        console.error('Error parsing user data:', error);
+        localStorage.removeItem('user');
+      }
+    } else {
+      setUser(null);
+      setRegisteredSessions([]);
     }
   }, [location.pathname]); // Re-check when route changes
 
@@ -59,7 +68,6 @@ const Navbar = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
     localStorage.removeItem('user');
     setUser(null);
     setRegisteredSessions([]);

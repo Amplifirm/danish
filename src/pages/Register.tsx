@@ -1,13 +1,20 @@
-
-
-// Updated Register component
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { API_ENDPOINTS } from '../config/api';
+import { authService } from '../lib/supabase';
 
-const Register = () => {
-  const [formData, setFormData] = useState({
+interface FormData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  company: string;
+  jobTitle: string;
+  phone: string;
+}
+
+const Register: React.FC = () => {
+  const [formData, setFormData] = useState<FormData>({
     firstName: '',
     lastName: '',
     email: '',
@@ -17,18 +24,18 @@ const Register = () => {
     jobTitle: '',
     phone: ''
   });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>('');
   const navigate = useNavigate();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
     setLoading(true);
     setError('');
@@ -40,26 +47,22 @@ const Register = () => {
     }
 
     try {
-      const response = await axios.post(API_ENDPOINTS.REGISTER, {
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-        password: formData.password,
-        company: formData.company,
-        jobTitle: formData.jobTitle,
-        phone: formData.phone
-      });
+      const result = await authService.register(formData);
 
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
-      navigate('/dashboard');
+      if (result.success && result.user) {
+        // Store user data in localStorage for immediate access
+        localStorage.setItem('user', JSON.stringify(result.user));
+        
+        // Small delay to ensure everything is saved
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 100);
+      } else {
+        setError(result.error || 'Registration failed');
+      }
     } catch (err: any) {
       console.error('Registration error:', err);
-      if (err.code === 'ERR_NETWORK') {
-        setError('Cannot connect to server. Please check if the backend is running.');
-      } else {
-        setError(err.response?.data?.message || 'Registration failed');
-      }
+      setError('Registration failed. Please try again.');
     } finally {
       setLoading(false);
     }

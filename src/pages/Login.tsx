@@ -1,32 +1,34 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { API_ENDPOINTS } from '../config/api';
+import { authService } from '../lib/supabase';
 
-const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+const Login: React.FC = () => {
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>('');
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
     try {
-        const response = await axios.post(API_ENDPOINTS.LOGIN, {
-            email,
-            password,
-          });
-  
+      // Use table-based authentication (no Supabase Auth)
+      const result = await authService.login(email, password);
 
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
-      navigate('/dashboard');
+      if (result.success && result.user) {
+        // Store user data from user_profiles table
+        localStorage.setItem('user', JSON.stringify(result.user));
+        console.log('Login successful, user data:', result.user);
+        navigate('/dashboard');
+      } else {
+        setError(result.error || 'Login failed');
+      }
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Login failed');
+      console.error('Login error:', err);
+      setError('Login failed. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -95,6 +97,13 @@ const Login = () => {
                 Sign up here
               </button>
             </p>
+          </div>
+
+          {/* Debug info - remove in production */}
+          <div className="mt-4 text-center">
+            <small className="text-gray-500">
+              Using table-based authentication (user_profiles table)
+            </small>
           </div>
         </div>
       </div>

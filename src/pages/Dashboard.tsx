@@ -4,9 +4,11 @@ import {
   User, Calendar, Clock, MapPin, TrendingUp, DollarSign, Zap, Shield, 
   LogOut,  CheckCircle, Plus, Trash2, Users, Coffee
 } from 'lucide-react';
+import { authService } from '../lib/supabase';
 
 // Type definitions
 interface UserType {
+  id: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -14,7 +16,6 @@ interface UserType {
   company?: string;
   registeredSessions?: RegisteredSession[];
 }
-
 
 interface RegisteredSession {
   sessionId: string;
@@ -44,54 +45,88 @@ const Dashboard = () => {
   // Get track icon and color
   const getTrackInfo = (track: string): TrackInfo => {
     const trackMap: Record<string, TrackInfo> = {
-      'revenue': { icon: <TrendingUp className="w-4 h-4" />, color: 'blue', name: 'Drive Revenue' },
-      'expenses': { icon: <DollarSign className="w-4 h-4" />, color: 'emerald', name: 'Reduce Expenses' },
-      'productivity': { icon: <Zap className="w-4 h-4" />, color: 'purple', name: 'Increase Productivity' },
-      'cybersecurity': { icon: <Shield className="w-4 h-4" />, color: 'red', name: 'Enhance Cybersecurity' }
+      'drive revenue': { icon: <TrendingUp className="w-4 h-4" />, color: 'blue', name: 'Drive Revenue' },
+      'reduce expenses': { icon: <DollarSign className="w-4 h-4" />, color: 'emerald', name: 'Reduce Expenses' },
+      'increase productivity': { icon: <Zap className="w-4 h-4" />, color: 'purple', name: 'Increase Productivity' },
+      'enhance cybersecurity': { icon: <Shield className="w-4 h-4" />, color: 'red', name: 'Enhance Cybersecurity' }
     };
-    return trackMap[track] || { icon: <Calendar className="w-4 h-4" />, color: 'gray', name: track };
+    return trackMap[track.toLowerCase()] || { icon: <Calendar className="w-4 h-4" />, color: 'gray', name: track };
   };
 
   useEffect(() => {
-    const userData = localStorage.getItem('user');
-    const token = localStorage.getItem('token');
-    
-    if (!userData || !token) {
-      navigate('/login');
-      return;
-    }
+    const loadUserData = async () => {
+      try {
+        // Check if user data exists in localStorage
+        const userData = localStorage.getItem('user');
+        
+        if (!userData) {
+          console.log('No user data found, redirecting to login');
+          navigate('/login');
+          return;
+        }
 
-    const parsedUser: UserType = JSON.parse(userData);
-    setUser(parsedUser);
-    setRegisteredSessions(parsedUser.registeredSessions || []);
-    setLoading(false);
+        const parsedUser: UserType = JSON.parse(userData);
+        console.log('Loaded user from localStorage:', parsedUser);
+        
+        // Get fresh data from database
+        const result = await authService.getCurrentUser();
+        
+        if (result.success && result.user) {
+          console.log('Fresh user data from database:', result.user);
+          setUser(result.user);
+          setRegisteredSessions(result.user.registeredSessions || []);
+          
+          // Update localStorage with fresh data
+          localStorage.setItem('user', JSON.stringify(result.user));
+        } else {
+          console.log('Failed to get current user, using localStorage data');
+          // Fallback to localStorage data
+          setUser(parsedUser);
+          setRegisteredSessions(parsedUser.registeredSessions || []);
+        }
+      } catch (err) {
+        console.error('Error loading user data:', err);
+        setError('Failed to load user data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadUserData();
   }, [navigate]);
 
   const handleLogout = (): void => {
-    localStorage.removeItem('token');
     localStorage.removeItem('user');
     navigate('/');
   };
 
   const removeSession = async (sessionId: string): Promise<void> => {
     try {
-      const updatedSessions = registeredSessions.filter(session => session.sessionId !== sessionId);
+      setLoading(true);
       
-      // Update local state immediately
-      setRegisteredSessions(updatedSessions);
+      // Call the backend to remove the session
+      const result = await authService.unregisterSession(sessionId);
       
-      // Update localStorage
-      if (user) {
-        const updatedUser = { ...user, registeredSessions: updatedSessions };
-        localStorage.setItem('user', JSON.stringify(updatedUser));
-        setUser(updatedUser);
+      if (result.success) {
+        // Update local state with fresh data from backend
+        setRegisteredSessions(result.registeredSessions || []);
+        
+        // Update localStorage
+        if (user) {
+          const updatedUser = { ...user, registeredSessions: result.registeredSessions || [] };
+          localStorage.setItem('user', JSON.stringify(updatedUser));
+          setUser(updatedUser);
+        }
+        
+        console.log('Session removed successfully:', sessionId);
+      } else {
+        setError(result.error || 'Failed to remove session');
       }
-      
-      // Note: You might want to add a backend endpoint to remove sessions
-      console.log('Session removed:', sessionId);
     } catch (err) {
       setError('Failed to remove session');
       console.error('Remove session error:', err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -114,7 +149,7 @@ const Dashboard = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-white flex items-center justify-center">
-        <div className="text-gray-600">Loading...</div>
+        <div className="text-gray-600">Loading dashboard...</div>
       </div>
     );
   }
@@ -161,6 +196,12 @@ const Dashboard = () => {
         {error && (
           <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
             <p className="text-red-700 text-sm">{error}</p>
+            <button 
+              onClick={() => setError('')}
+              className="text-blue-600 hover:text-blue-800 text-sm mt-2"
+            >
+              Dismiss
+            </button>
           </div>
         )}
 
@@ -328,9 +369,9 @@ const Dashboard = () => {
                                 <div>
                                   <div className="text-gray-700 font-medium">{slot.session.sessionTitle}</div>
                                   <div className="flex items-center space-x-2 mt-1">
-                                    {getTrackInfo(slot.session.track?.toLowerCase() || '').icon}
+                                    {getTrackInfo(slot.session.track || '').icon}
                                     <span className="text-gray-600 text-sm">
-                                      {getTrackInfo(slot.session.track?.toLowerCase() || '').name}
+                                      {getTrackInfo(slot.session.track || '').name}
                                     </span>
                                   </div>
                                 </div>
@@ -346,7 +387,8 @@ const Dashboard = () => {
                                 <CheckCircle className="w-5 h-5 text-blue-600" />
                                 <button
                                   onClick={() => removeSession(slot.session!.sessionId)}
-                                  className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded"
+                                  disabled={loading}
+                                  className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded disabled:opacity-50"
                                 >
                                   <Trash2 className="w-4 h-4" />
                                 </button>

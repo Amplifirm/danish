@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-  Clock, TrendingUp, DollarSign, Zap, Shield, Users,  X, Calendar, MapPin, 
+  Clock, TrendingUp, DollarSign, Zap, Shield, Users, X, Calendar, MapPin, 
   Coffee, CheckCircle 
 } from 'lucide-react';
-import axios from 'axios';
-
+import { authService } from '../lib/supabase';
 
 // Type definitions
 interface UserType {
+  id: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -55,16 +55,20 @@ const AgendaPage = () => {
   const [error, setError] = useState<string>('');
   const navigate = useNavigate();
 
-
   useEffect(() => {
-    // Check if user is logged in
+    // Check if user is logged in - no token needed for table auth
     const userData = localStorage.getItem('user');
-    const token = localStorage.getItem('token');
     
-    if (userData && token) {
-      const parsedUser: UserType = JSON.parse(userData);
-      setUser(parsedUser);
-      setRegisteredSessions(parsedUser.registeredSessions || []);
+    if (userData) {
+      try {
+        const parsedUser: UserType = JSON.parse(userData);
+        setUser(parsedUser);
+        setRegisteredSessions(parsedUser.registeredSessions || []);
+        console.log('AgendaPage loaded user:', parsedUser);
+      } catch (error) {
+        console.error('Error parsing user data:', error);
+        localStorage.removeItem('user');
+      }
     }
   }, []);
 
@@ -335,47 +339,51 @@ const AgendaPage = () => {
       return;
     }
 
-    if (isSessionRegistered(session.id)) {
-      // Unregister session (you might want to add this endpoint to backend)
-      const updatedSessions = registeredSessions.filter(s => s.sessionId !== session.id);
-      setRegisteredSessions(updatedSessions);
-      
-      // Update localStorage
-      const updatedUser = { ...user, registeredSessions: updatedSessions };
-      localStorage.setItem('user', JSON.stringify(updatedUser));
-      setUser(updatedUser);
-      return;
-    }
-
     setLoading(true);
     setError('');
 
     try {
-      const token = localStorage.getItem('token');
-      const trackName = tracks.find(t => t.id === session.track)?.name || 'General';
-      
-      const response = await axios.post('http://localhost:8000/api/auth/register-session', {
-        sessionId: session.id,
-        sessionTitle: session.title,
-        track: trackName,
-        time: timeSlot
-      }, {
-        headers: {
-          'Authorization': `Bearer ${token}`
+      if (isSessionRegistered(session.id)) {
+        // Unregister session using table-based auth
+        const result = await authService.unregisterSession(session.id);
+
+        if (result.success) {
+          setRegisteredSessions(result.registeredSessions || []);
+          
+          // Update localStorage
+          const updatedUser = { ...user, registeredSessions: result.registeredSessions || [] };
+          localStorage.setItem('user', JSON.stringify(updatedUser));
+          setUser(updatedUser);
+          console.log('Session unregistered successfully:', session.id);
+        } else {
+          setError(result.error || 'Failed to unregister session');
         }
-      });
+      } else {
+        // Register session using table-based auth
+        const trackName = tracks.find(t => t.id === session.track)?.name || 'General';
+        
+        const result = await authService.registerSession({
+          sessionId: session.id,
+          sessionTitle: session.title,
+          track: trackName,
+          time: timeSlot
+        });
 
-      // Update local state
-      setRegisteredSessions(response.data.registeredSessions);
-      
-      // Update localStorage
-      const updatedUser = { ...user, registeredSessions: response.data.registeredSessions };
-      localStorage.setItem('user', JSON.stringify(updatedUser));
-      setUser(updatedUser);
-
+        if (result.success) {
+          setRegisteredSessions(result.registeredSessions || []);
+          
+          // Update localStorage
+          const updatedUser = { ...user, registeredSessions: result.registeredSessions || [] };
+          localStorage.setItem('user', JSON.stringify(updatedUser));
+          setUser(updatedUser);
+          console.log('Session registered successfully:', session.id);
+        } else {
+          setError(result.error || 'Registration failed');
+        }
+      }
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Registration failed');
-      console.error('Registration error:', err);
+      setError('Session operation failed');
+      console.error('Session registration error:', err);
     } finally {
       setLoading(false);
     }
@@ -393,8 +401,6 @@ const AgendaPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-white">
-      
-
       {/* Hero Section */}
       <section className="relative pt-32 pb-16 px-6">
         <div className="max-w-7xl mx-auto">
@@ -480,6 +486,12 @@ const AgendaPage = () => {
         <div className="max-w-7xl mx-auto px-6 mb-6">
           <div className="bg-red-50 border border-red-200 rounded-xl p-4">
             <p className="text-red-700 text-sm">{error}</p>
+            <button 
+              onClick={() => setError('')}
+              className="text-blue-600 hover:text-blue-800 text-sm mt-2"
+            >
+              Dismiss
+            </button>
           </div>
         </div>
       )}
@@ -559,7 +571,7 @@ const AgendaPage = () => {
                           <button
                             onClick={() => handleSessionRegister(session, slot.time)}
                             disabled={loading}
-                            className={`text-xs px-3 py-2 rounded-lg transition-all duration-200 w-full font-medium ${
+                            className={`text-xs px-3 py-2 rounded-lg transition-all duration-200 w-full font-medium disabled:opacity-50 ${
                               isRegistered
                                 ? 'bg-green-100 text-green-700 border border-green-200 hover:bg-green-200'
                                 : user
@@ -568,7 +580,7 @@ const AgendaPage = () => {
                             }`}
                           >
                             {loading ? (
-                              'Loading...'
+                              'Processing...'
                             ) : isRegistered ? (
                               'Registered ✓'
                             ) : user ? (
@@ -614,7 +626,8 @@ const AgendaPage = () => {
                   handleSessionRegister(selectedSession, '');
                   setSelectedSession(null);
                 }}
-                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200"
+                disabled={loading}
+                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 disabled:opacity-50"
               >
                 {isSessionRegistered(selectedSession.id) ? 'Remove from Schedule' : 'Add to Schedule'}
               </button>
