@@ -1,16 +1,8 @@
 {
-  "functions": {
-    "api/auth/register.js": {
-      "maxDuration": 10
-    },
-    "api/auth/login.js": {
-      "maxDuration": 10
-    },
-    "api/auth/register-session.js": {
-      "maxDuration": 10
-    },
-    "api/health.js": {
-      "maxDuration": 5
-    }
+    "rewrites": [
+      {
+        "source": "/(.*)",
+        "destination": "/index.html"
+      }
+    ]
   }
-}
