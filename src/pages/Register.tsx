@@ -1,6 +1,10 @@
+
+
+// Updated Register component
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { API_ENDPOINTS } from '../config/api';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -36,7 +40,7 @@ const Register = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:8000/api/auth/register', {
+      const response = await axios.post(API_ENDPOINTS.REGISTER, {
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
@@ -50,7 +54,12 @@ const Register = () => {
       localStorage.setItem('user', JSON.stringify(response.data.user));
       navigate('/dashboard');
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Registration failed');
+      console.error('Registration error:', err);
+      if (err.code === 'ERR_NETWORK') {
+        setError('Cannot connect to server. Please check if the backend is running.');
+      } else {
+        setError(err.response?.data?.message || 'Registration failed');
+      }
     } finally {
       setLoading(false);
     }
