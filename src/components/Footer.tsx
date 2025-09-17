@@ -1,41 +1,14 @@
-import { useState } from 'react';
+
 import { 
-  Phone, Mail, MapPin, Linkedin,  Youtube, Play, Pause, 
-  Volume2, VolumeX, Maximize, Calendar, Users,  ArrowRight, 
+  Phone, Mail, MapPin, Linkedin,  Youtube,
+ Calendar, Users,  ArrowRight, 
  Star, CheckCircle, Globe
 } from 'lucide-react';
 
 const ProfessionalFooter = () => {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(true);
-  const [videoLoaded, setVideoLoaded] = useState(false);
 
-  const handlePlayPause = () => {
-    const video = document.getElementById('aspire-video') as HTMLVideoElement;
-    if (video) {
-      if (isPlaying) {
-        video.pause();
-      } else {
-        video.play();
-      }
-      setIsPlaying(!isPlaying);
-    }
-  };
 
-  const handleMute = () => {
-    const video = document.getElementById('aspire-video') as HTMLVideoElement;
-    if (video) {
-      video.muted = !isMuted;
-      setIsMuted(!isMuted);
-    }
-  };
-
-  const handleFullscreen = () => {
-    const video = document.getElementById('aspire-video') as HTMLVideoElement;
-    if (video && video.requestFullscreen) {
-      video.requestFullscreen();
-    }
-  };
+  
 
   return (
     <footer className="relative overflow-hidden">
@@ -70,77 +43,7 @@ const ProfessionalFooter = () => {
              
             </div>
 
-            {/* Right Video Player */}
-            <div className="relative">
-              <div className="relative bg-black/50 backdrop-blur-sm rounded-3xl overflow-hidden border border-gray-300/50 shadow-2xl">
-                <video
-                  id="aspire-video"
-                  className="w-full aspect-video object-cover"
-                  muted={isMuted}
-                  onLoadedData={() => setVideoLoaded(true)}
-                  onPlay={() => setIsPlaying(true)}
-                  onPause={() => setIsPlaying(false)}
-                  poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 450'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23667eea;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23764ba2;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='800' height='450' fill='url(%23grad)'/%3E%3Ctext x='400' y='200' text-anchor='middle' fill='white' font-family='Arial' font-size='32' font-weight='300'%3EASPIRE 2024%3C/text%3E%3Ctext x='400' y='250' text-anchor='middle' fill='white' font-family='Arial' font-size='18' opacity='0.8'%3EEvent Highlights%3C/text%3E%3C/svg%3E"
-                >
-                  <source src="/videos/23 years of learning.mp4" type="video/mp4" />
-                  Your browser does not support the video tag.
-                </video>
-
-                {/* Play Overlay */}
-                <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 hover:opacity-100 transition-all duration-300">
-                  <button
-                    onClick={handlePlayPause}
-                    className="w-20 h-20 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white hover:scale-110 transition-all duration-200 shadow-2xl"
-                    disabled={!videoLoaded}
-                  >
-                    {isPlaying ? (
-                      <Pause className="w-8 h-8 text-gray-900" />
-                    ) : (
-                      <Play className="w-8 h-8 text-gray-900 ml-1" />
-                    )}
-                  </button>
-                </div>
-
-                {/* Controls */}
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-6">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4">
-                      <button
-                        onClick={handlePlayPause}
-                        className="text-white/80 hover:text-white transition-colors p-2 rounded-lg hover:bg-white/10"
-                        disabled={!videoLoaded}
-                      >
-                        {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
-                      </button>
-                      <button
-                        onClick={handleMute}
-                        className="text-white/80 hover:text-white transition-colors p-2 rounded-lg hover:bg-white/10"
-                        disabled={!videoLoaded}
-                      >
-                        {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
-                      </button>
-                    </div>
-                    <button
-                      onClick={handleFullscreen}
-                      className="text-white/80 hover:text-white transition-colors p-2 rounded-lg hover:bg-white/10"
-                      disabled={!videoLoaded}
-                    >
-                      <Maximize className="w-5 h-5" />
-                    </button>
-                  </div>
-                </div>
-
-                {/* Loading */}
-                {!videoLoaded && (
-                  <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center">
-                    <div className="text-center">
-                      <div className="w-12 h-12 border-2 border-white/20 border-t-white rounded-full animate-spin mx-auto mb-4"></div>
-                      <p className="text-white/80">Loading video...</p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
+            
           </div>
         </div>
       </div>
