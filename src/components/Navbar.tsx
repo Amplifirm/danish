@@ -94,7 +94,9 @@ const Navbar = () => {
                     className="h-10 w-auto"
                   />
                   <div className="hidden sm:block">
-                    <div className="text-xl font-light text-gray-900">ASPIRE 2025</div>
+                    <div className="text-sm font-light text-gray-900 leading-tight">
+                      Presented in Honor of Our 24th Anniversary
+                    </div>
                     <div className="text-xs text-gray-500">Oct 15 • NYC</div>
                   </div>
                 </Link>
@@ -106,13 +108,16 @@ const Navbar = () => {
                   <Link
                     key={item.name}
                     to={item.path}
-                    className={`transition-colors duration-200 font-medium ${
+                    className={`transition-all duration-200 font-medium relative ${
                       isActivePage(item.path) 
                         ? 'text-blue-600' 
                         : 'text-gray-600 hover:text-gray-900'
                     }`}
                   >
                     {item.name}
+                    {isActivePage(item.path) && (
+                      <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-blue-600 rounded-full"></div>
+                    )}
                   </Link>
                 ))}
               </div>
@@ -163,7 +168,7 @@ const Navbar = () => {
                     </Link>
                     <Link
                       to="/register"
-                      className="flex items-center space-x-2 px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 font-medium shadow-md"
+                      className="flex items-center space-x-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 font-medium shadow-md"
                     >
                       <UserPlus className="w-4 h-4" />
                       <span>Register</span>
@@ -198,6 +203,9 @@ const Navbar = () => {
                     }`}
                   >
                     {item.name}
+                    {isActivePage(item.path) && (
+                      <div className="mt-1 w-full h-0.5 bg-blue-600 rounded-full"></div>
+                    )}
                   </Link>
                 ))}
                 
@@ -257,7 +265,7 @@ const Navbar = () => {
                       </Link>
                       <Link
                         to="/register"
-                        className="flex items-center space-x-3 py-3 px-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 font-medium shadow-md"
+                        className="flex items-center space-x-3 py-3 px-4 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all duration-200 font-medium shadow-md"
                       >
                         <UserPlus className="w-5 h-5" />
                         <span>Register for ASPIRE 2025</span>

@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Calendar, MapPin, Users, ArrowRight, Play, CheckCircle, TrendingUp, DollarSign, Zap, Shield, ChevronRight, X } from 'lucide-react';
 
+import ProfessionalFooter from '../components/Footer';
+
 // Type definitions
 interface Session {
   title: string;
@@ -46,9 +48,9 @@ const HomePage = () => {
     {
       id: 1,
       title: "Drive Revenue",
-      icon: <TrendingUp className="w-5 h-5" />,
-      color: "#3C1AF9",
-      bgColor: "bg-blue-50",
+      icon: <TrendingUp className="w-6 h-6" />,
+      color: "#D514FF",
+      bgColor: "bg-gray-100",
       description: "AI integration, customer success strategies, and growth optimization",
       fullDescription: "Discover innovative strategies to accelerate business growth through cutting-edge technology and customer-centric approaches. Learn how AI can transform your sales processes, how to build exceptional customer success programs, and implement growth optimization techniques that deliver measurable results.",
       keyTopics: ["AI Integration", "Customer Success", "E365 Implementation", "Growth Optimization"],
@@ -100,9 +102,9 @@ const HomePage = () => {
     {
       id: 2,
       title: "Reduce Expenses", 
-      icon: <DollarSign className="w-5 h-5" />,
-      color: "#1DC5AC",
-      bgColor: "bg-emerald-50",
+      icon: <DollarSign className="w-6 h-6" />,
+      color: "#00C6AC",
+      bgColor: "bg-gray-100",
       description: "Cost optimization through modern cloud platforms and AI tools",
       fullDescription: "Master intelligent cost reduction without sacrificing quality or growth potential. Explore how modern cloud technologies and AI-powered tools can streamline operations, reduce overhead, and optimize resource allocation for maximum efficiency.",
       keyTopics: ["Cloud Migration", "AI Cost Reduction", "Compliance Optimization", "Vendor Management"],
@@ -154,9 +156,9 @@ const HomePage = () => {
     {
       id: 3,
       title: "Increase Productivity",
-      icon: <Zap className="w-5 h-5" />,
-      color: "#B61BFD", 
-      bgColor: "bg-purple-50",
+      icon: <Zap className="w-6 h-6" />,
+      color: "#00A1EF", 
+      bgColor: "bg-gray-100",
       description: "Workflow automation and operational efficiency solutions",
       fullDescription: "Transform your business operations with advanced automation technologies and productivity optimization strategies. Learn how to eliminate bottlenecks, streamline workflows, and empower your team to focus on high-value activities that drive business growth.",
       keyTopics: ["Task Automation", "Remote Workflows", "Team Efficiency", "Digital Transformation"],
@@ -208,9 +210,9 @@ const HomePage = () => {
     {
       id: 4,
       title: "Enhance Cybersecurity",
-      icon: <Shield className="w-5 h-5" />,
-      color: "#2EA1ED",
-      bgColor: "bg-red-50", 
+      icon: <Shield className="w-6 h-6" />,
+      color: "#4113FD",
+      bgColor: "bg-gray-100", 
       description: "Advanced threat protection and data security strategies",
       fullDescription: "Build a robust cybersecurity framework that protects your business from evolving threats while enabling growth and innovation. Learn cutting-edge security strategies, threat intelligence, and risk management approaches tailored for small and medium businesses.",
       keyTopics: ["Ransomware Prevention", "Data Protection", "Security Innovation", "Threat Intelligence"],
@@ -317,8 +319,9 @@ const HomePage = () => {
                   alt="ASPIRE 2025" 
                   className="h-24 w-auto"
                 />
-                
               </div>
+
+             
 
               {/* Headline */}
               <div>
@@ -327,7 +330,7 @@ const HomePage = () => {
                 </h1>
                 <p className="text-xl text-gray-700 leading-relaxed font-roboto">
                   One-day conference for SMB leaders featuring <strong>24 expert sessions</strong> across 
-                  <strong> four strategic tracks</strong>. Join <strong>400+ business executives</strong> at 
+                  <strong> four strategic tracks</strong>. Join <strong>150+ business executives</strong> at 
                   Microsoft Technology Center, NYC.
                 </p>
               </div>
@@ -337,7 +340,7 @@ const HomePage = () => {
                 {[
                   { num: '24', label: 'Sessions', color: '#B61BFD' },
                   { num: '4', label: 'Tracks', color: '#3C1AF9' },
-                  { num: '200', label: 'Attendees', color: '#2EA1ED' }
+                  { num: '150+', label: 'Attendees', color: '#2EA1ED' }
                 ].map((stat, i) => (
                   <div key={i} className={`text-center p-6 bg-white rounded-2xl shadow-lg border border-gray-100 animate-fadeInUp delay-${(i + 1) * 100}`}>
                     <div className="text-3xl font-bold mb-2 font-roboto" style={{color: stat.color}}>
@@ -361,7 +364,10 @@ const HomePage = () => {
                   </div>
                 </button>
                 
-                <button className="px-8 py-4 border-2 border-gray-300 text-gray-700 font-semibold rounded-xl hover:border-gray-400 hover:bg-gray-50 transition-all duration-300 animate-fadeInUp delay-500 transform hover:scale-105 font-roboto">
+                <button 
+                  className="px-8 py-4 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 animate-fadeInUp delay-500 transform hover:scale-105 font-roboto"
+                  style={{background: 'linear-gradient(135deg, #1DC5AC, #2EA1ED)'}}
+                >
                   <div className="flex items-center justify-center space-x-2">
                     <Play className="w-5 h-5" />
                     <span>Watch Preview</span>
@@ -371,15 +377,15 @@ const HomePage = () => {
             </div>
 
             {/* Right - Event Details */}
-            <div className="bg-white rounded-3xl p-6 shadow-xl border border-gray-100 animate-float">
+            <div className="bg-white rounded-3xl p-6 shadow-xl border border-gray-100 animate-float mt-8">
               <div className="text-center mb-6">
-                <span className="bg-red-100 text-red-700 px-4 py-2 rounded-full text-sm font-bold animate-bounce-slow font-roboto">
+                <span className="bg-white-100 text-red-700 px-4 py-2 rounded-full text-sm font-bold animate-bounce-slow font-roboto">
                   LIMITED SEATING
                 </span>
               </div>
 
               <div className="space-y-6 mb-6">
-                <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-xl animate-fadeInUp delay-100">
+                <div className="flex items-center space-x-3 p-3 bg-gray-100 rounded-xl animate-fadeInUp delay-100">
                   <Calendar className="w-5 h-5" style={{color: '#2EA1ED'}} />
                   <div>
                     <div className="font-bold text-gray-900 font-roboto">October 15, 2025</div>
@@ -387,7 +393,7 @@ const HomePage = () => {
                   </div>
                 </div>
                 
-                <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-xl animate-fadeInUp delay-200">
+                <div className="flex items-center space-x-3 p-3 bg-gray-100 rounded-xl animate-fadeInUp delay-200">
                   <MapPin className="w-5 h-5" style={{color: '#2EA1ED'}} />
                   <div>
                     <div className="font-bold text-gray-900 font-roboto">Microsoft Technology Center</div>
@@ -395,7 +401,7 @@ const HomePage = () => {
                   </div>
                 </div>
                 
-                <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-xl animate-fadeInUp delay-300">
+                <div className="flex items-center space-x-3 p-3 bg-gray-100 rounded-xl animate-fadeInUp delay-300">
                   <Users className="w-5 h-5" style={{color: '#2EA1ED'}} />
                   <div>
                     <div className="font-bold text-gray-900 font-roboto">Networking Reception</div>
@@ -404,47 +410,49 @@ const HomePage = () => {
                 </div>
               </div>
 
-              {/* Keynote Speakers */}
+              {/* Keynote Speakers - Side by Side Layout */}
               <div className="border-t border-gray-200 pt-6">
-                <div className="text-center mb-4">
+                <div className="text-center mb-6">
                   <span 
-                    className="px-4 py-2 rounded-full text-sm font-bold border animate-fadeInUp delay-400 font-roboto"
+                    className="px-4 py-2 rounded-full text-sm font-bold animate-fadeInUp delay-400 font-roboto"
                     style={{
-                      background: 'rgba(60, 26, 249, 0.1)',
-                      color: '#3C1AF9', 
-                      borderColor: 'rgba(60, 26, 249, 0.3)'
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      color: '#3C1AF9'
                     }}
                   >
                     KEYNOTE SPEAKERS
                   </span>
                 </div>
                 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {keynoteSpeeakers.map((speaker, index) => (
                     <div 
                       key={speaker.id}
-                      className={`bg-gray-50 rounded-xl p-3 cursor-pointer hover:bg-gray-100 transition-all duration-300 animate-fadeInUp delay-${500 + (index * 100)} transform hover:scale-105`}
+                      className={`bg-gray-100 rounded-xl p-4 cursor-pointer hover:bg-gray-200 transition-all duration-300 animate-fadeInUp delay-${500 + (index * 100)} transform hover:scale-105 shadow-lg hover:shadow-xl`}
                       onClick={() => setSelectedSpeaker(speaker)}
                     >
-                      <div className="text-center">
-                        <div className="w-12 h-12 rounded-xl mx-auto mb-2 overflow-hidden border-2" style={{borderColor: '#3C1AF9'}}>
+                      <div className="flex items-center space-x-4">
+                        <div className="w-16 h-16 rounded-xl overflow-hidden border-2 shadow-md flex-shrink-0" style={{borderColor: '#3C1AF9'}}>
                           <img 
                             src={speaker.image} 
                             alt={speaker.name}
                             className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
                           />
                         </div>
-                        <h4 className="font-bold text-gray-900 text-xs leading-tight font-roboto">{speaker.name}</h4>
-                        <p className="text-xs font-medium mt-1 font-roboto" style={{color: '#3C1AF9'}}>{speaker.title}</p>
+                        <div className="flex-1 text-left">
+                          <h4 className="font-bold text-gray-900 text-sm leading-tight font-roboto">{speaker.name}</h4>
+                          <p className="text-sm font-medium mt-1 font-roboto" style={{color: '#3C1AF9'}}>{speaker.title}</p>
+                          <p className="text-xs text-gray-600 font-roboto">{speaker.company}</p>
+                        </div>
                       </div>
                     </div>
                   ))}
                 </div>
 
-                <div className="mt-4">
+                <div className="mt-6">
                   <button 
-                    className="w-full py-3 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-300 animate-fadeInUp delay-700 transform hover:scale-105 font-roboto"
-                    style={{background: '#3C1AF9'}}
+                    className="w-full py-4 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 animate-fadeInUp delay-700 transform hover:scale-105 font-roboto"
+                    style={{background: 'linear-gradient(135deg, #3C1AF9, #B61BFD)'}}
                     onClick={() => window.location.href = '/register'}
                   >
                     Reserve Your Seat
@@ -456,37 +464,78 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* What's In It For You Section */}
-      <section className="py-20 px-6 bg-white">
-        <div className="max-w-6xl mx-auto text-center">
-          <h2 className="text-5xl lg:text-6xl font-light text-gray-900 mb-8 font-roboto">
-            What's in it for you?
-          </h2>
-          <p className="text-xl lg:text-2xl text-gray-600 leading-relaxed max-w-5xl mx-auto font-roboto">
-            Immediate ROI strategies, expert networking opportunities, competitive technology edge, 
-            and proven solutions you can implement Monday morning to transform your business.
-          </p>
-        </div>
-      </section>
+      {/* What's In It For You Section - Updated Content */}
+<section className="py-20 px-6 bg-white">
+  <div className="max-w-6xl mx-auto text-center">
+    <h2 className="text-5xl lg:text-6xl font-light text-gray-900 mb-8 font-roboto">
+      What is in it for you? <span 
+        className="font-light bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent"
+        style={{
+          background: 'linear-gradient(135deg, #3C1AF9, #B61BFD)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text'
+        }}
+      >
+        Actionable Insights.
+      </span>
+    </h2>
+    
+    <div className="space-y-8 text-xl lg:text-2xl text-gray-600 leading-relaxed max-w-5xl mx-auto font-roboto">
+      <p>
+        We will deliver ROI strategies, expert networking opportunities, a competitive 
+        technology edge, and proven solutions you can implement Monday morning to 
+        transform your business.
+      </p>
+      
+      <p>
+        Aspire 2025 is more than a conference—it's a launchpad for innovation, 
+        collaboration, and transformation. This year's program is organized into four 
+        dynamic tracks, each designed to empower attendees with actionable insights 
+        and forward-thinking strategies.
+      </p>
+      
+      <p>
+        Today the roadmap for success is not clear. The economic landscape is changing 
+        from tariffs to AI to Human Capital. Making the right decisions is harder now 
+        than ever before.
+      </p>
+      
+      <p className="text-2xl lg:text-3xl font-medium text-gray-900">
+        Technology is the great equalizer.
+      </p>
+    </div>
+  </div>
+</section>
 
-      {/* Our Proven 4-Track Approach */}
-      <section className="py-20 px-6 bg-gradient-to-br from-slate-50 to-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-light text-gray-900 mb-6 font-roboto">
-              Our proven <span style={{color: '#3C1AF9'}}>4-track</span> learning approach
-            </h2>
-            <p className="text-xl text-gray-600 max-w-4xl mx-auto font-roboto">
-              We don't waste your time. Every session is strategically designed, expertly delivered,
-              and continuously optimized for maximum business impact.
-            </p>
-          </div>
+      {/* Our Proven 4-Track Approach - Updated with Black Line and No Numbers */}
+<section className="py-20 px-6 bg-gradient-to-br from-gray-100 to-white">
+  <div className="max-w-7xl mx-auto">
+    <div className="text-center mb-16">
+      <h2 className="text-5xl font-light text-gray-900 mb-6 font-roboto">
+        Our Proven <span 
+          className="font-light bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent font-roboto"
+          style={{
+            background: 'linear-gradient(135deg, #3C1AF9, #B61BFD)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text'
+          }}
+        >
+          4-track
+        </span> Learning Approach
+      </h2>
+      <p className="text-xl text-gray-600 max-w-4xl mx-auto font-roboto">
+        Whether you are looking to drive revenue, reduce expenses, increase operational efficiency or solidify your cybersecurity posture, you will find concrete information to help you and your organization take the next right step.
+        
+        We will not waste your time. Every session is strategically designed, expertly delivered, and continuously optimized for maximum business impact.
+      </p>
+    </div>
 
-          {/* Visual Process Flow */}
+          {/* Visual Process Flow - Black Line */}
           <div className="relative mb-16">
             <div 
-              className="absolute top-1/2 left-0 right-0 h-1 transform -translate-y-1/2 hidden lg:block"
-              style={{ background: 'linear-gradient(90deg, #3C1AF9 0%, #1DC5AC 100%)' }}
+              className="absolute top-1/2 left-0 right-0 h-1 transform -translate-y-1/2 hidden lg:block bg-black"
             />
             
             <div className="grid lg:grid-cols-4 gap-8 relative">
@@ -497,23 +546,20 @@ const HomePage = () => {
                   style={{animationDelay: `${index * 200}ms`}}
                   onClick={() => setSelectedTrack(track)}
                 >
-                  {/* Phase Circle */}
-                  <div className="relative mb-8 mx-auto w-16 h-16 lg:w-20 lg:h-20">
+                  {/* Phase Circle - No Numbers, More Prominent Icons */}
+                  <div className="relative mb-8 mx-auto w-20 h-20 lg:w-24 lg:h-24">
                     <div 
                       className="w-full h-full rounded-full flex items-center justify-center shadow-2xl relative z-10 text-white hover:scale-110 transition-all duration-300"
                       style={{backgroundColor: track.color}}
                     >
                       {track.icon}
                     </div>
-                    <div className="absolute -bottom-1 -right-1 bg-white rounded-full w-6 h-6 flex items-center justify-center shadow-lg">
-                      <span className="text-xs font-bold text-gray-700 font-roboto">0{track.id}</span>
-                    </div>
                   </div>
                   
-                  <div className="bg-white rounded-3xl p-6 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
-                    <h3 className="text-xl font-light text-gray-900 mb-3 font-roboto">
-                      {track.title}
-                    </h3>
+                  <div className={`${track.bgColor} rounded-3xl p-6 shadow-lg border border-gray-300 hover:shadow-xl transition-all duration-300 hover:-translate-y-2`}>
+                  <h3 className="text-xl font-bold text-gray-900 mb-3 font-roboto">
+  {track.title}
+</h3>
                     <p className="text-gray-600 leading-relaxed mb-4 font-roboto">
                       {track.description}
                     </p>
@@ -552,22 +598,22 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Final CTA */}
+      {/* Final CTA - Updated Attendee Number */}
       <section className="py-20 px-6 bg-white">
         <div className="max-w-4xl mx-auto text-center">
-          <div className="bg-gradient-to-br from-gray-50 to-white rounded-3xl p-16 shadow-xl border border-gray-100">
+          <div className="bg-gradient-to-br from-gray-100 to-white rounded-3xl p-16 shadow-xl border border-gray-100">
             <h2 className="text-5xl font-light text-gray-900 mb-8 font-roboto">Ready to Transform Your Business?</h2>
             <p className="text-xl text-gray-700 mb-12 font-roboto">
-              Join 400+ business leaders for a day of learning, networking, and growth 
+              Join 150+ business leaders for a day of learning, networking, and growth 
               at Microsoft Technology Center.
             </p>
             
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-12">
               {[
                 '✓ Complimentary Admission',
                 '✓ Lunch Included',
                 '✓ Networking Reception', 
-                '✓ Digital Resources'
+                
               ].map((feature, i) => (
                 <div key={i} className="bg-green-50 rounded-2xl p-4 border border-green-200">
                   <span className="text-emerald-700 font-light text-sm font-roboto">{feature}</span>
@@ -587,7 +633,10 @@ const HomePage = () => {
                 </div>
               </button>
               
-              <button className="px-12 py-4 border-2 border-gray-300 text-gray-700 text-xl font-light rounded-2xl hover:border-gray-400 hover:bg-gray-50 transition-all duration-300 font-roboto">
+              <button 
+                className="px-12 py-4 text-white text-xl font-light rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 font-roboto"
+                style={{background: 'linear-gradient(135deg, #1DC5AC, #2EA1ED)'}}
+              >
                 <div className="flex items-center justify-center space-x-3">
                   <span>View Agenda</span>
                   <Calendar className="w-6 h-6" />
@@ -598,58 +647,9 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="py-16 px-6 bg-gray-900 text-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-            <div>
-              <h3 className="text-2xl font-light mb-4 font-roboto">ASPIRE 2025</h3>
-              <p className="text-gray-400 font-roboto">
-                Transforming businesses through technology innovation.
-              </p>
-            </div>
-            
-            <div>
-              <h4 className="font-light mb-4 font-roboto">Contact</h4>
-              <div className="space-y-2 text-gray-400">
-                <p className="font-roboto">aspire@emazzanti.net</p>
-                <p className="font-roboto">+1 (844) 360-4400</p>
-                <p className="font-roboto">New York, NY</p>
-              </div>
-            </div>
-            
-            <div>
-              <h4 className="font-light mb-4 font-roboto">Quick Links</h4>
-              <div className="space-y-2">
-                {['Tracks', 'Agenda', 'Speakers', 'Venue'].map((link) => (
-                  <p key={link}>
-                    <button className="text-gray-400 hover:text-white transition-colors font-roboto">
-                      {link}
-                    </button>
-                  </p>
-                ))}
-              </div>
-            </div>
-            
-            <div>
-              <h4 className="font-light mb-4 font-roboto">Follow Us</h4>
-              <div className="flex space-x-3">
-                {['LinkedIn', 'Twitter'].map((social) => (
-                  <button key={social} className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-gray-700 transition-colors">
-                    <span className="text-sm font-light font-roboto">{social[0]}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-          
-          <div className="pt-8 border-t border-gray-800 text-center text-gray-400">
-            <p className="font-roboto">&copy; 2025 eMazzanti Technologies. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
+    
 
-      {/* Modals */}
+      {/* Modals - Updated with Bold Titles */}
       {selectedTrack && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-3xl p-8 max-w-6xl w-full max-h-[90vh] overflow-y-auto">
@@ -662,7 +662,7 @@ const HomePage = () => {
                   {selectedTrack.icon}
                 </div>
                 <div>
-                  <h3 className="text-4xl font-light text-gray-900 font-roboto">{selectedTrack.title}</h3>
+                  <h3 className="text-4xl font-bold text-gray-900 font-roboto">{selectedTrack.title}</h3>
                   <p className="text-gray-600 font-roboto">{selectedTrack.sessions?.length || 0} Expert Sessions</p>
                 </div>
               </div>
@@ -713,7 +713,7 @@ const HomePage = () => {
                   {selectedTrack.sessions?.map((session, i) => (
                     <div key={i} className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
                       <div className="flex items-start justify-between mb-3">
-                        <h5 className="font-light text-gray-900 font-roboto text-lg leading-tight">{session.title}</h5>
+                        <h5 className="font-bold text-gray-900 font-roboto text-lg leading-tight">{session.title}</h5>
                         <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-roboto font-light">
                           {session.time}
                         </span>
@@ -733,7 +733,7 @@ const HomePage = () => {
             <div className="flex space-x-4 pt-6 border-t border-gray-200">
               <button 
                 className="flex-1 py-4 text-white font-light rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 font-roboto text-lg"
-                style={{backgroundColor: selectedTrack.color}}
+                style={{background: `linear-gradient(135deg, ${selectedTrack.color}, #B61BFD)`}}
                 onClick={() => window.location.href = '/register'}
               >
                 Register for This Track
@@ -845,6 +845,7 @@ const HomePage = () => {
         </div>
       )}
 
+<ProfessionalFooter/>
       <style>
         {`
           @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap');

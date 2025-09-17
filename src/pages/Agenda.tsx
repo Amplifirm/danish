@@ -27,6 +27,7 @@ interface Track {
   name: string;
   icon: JSX.Element;
   color: string;
+  bgColor: string;
 }
 
 interface Session {
@@ -46,6 +47,30 @@ interface TimeSlot {
   sessions?: Session[];
 }
 
+// Extended AuthService interface
+interface ExtendedAuthService {
+  getUserRegistrations?: (userId: string) => Promise<{
+    success: boolean;
+    registeredSessions?: RegisteredSession[];
+    error?: string;
+  }>;
+  registerSession?: (sessionData: {
+    sessionId: string;
+    sessionTitle: string;
+    track: string;
+    time: string;
+  }) => Promise<{
+    success: boolean;
+    registeredSessions?: RegisteredSession[];
+    error?: string;
+  }>;
+  unregisterSession?: (sessionId: string) => Promise<{
+    success: boolean;
+    registeredSessions?: RegisteredSession[];
+    error?: string;
+  }>;
+}
+
 const AgendaPage = () => {
   const [selectedTrack, setSelectedTrack] = useState<string>('all');
   const [selectedSession, setSelectedSession] = useState<Session | null>(null);
@@ -55,28 +80,82 @@ const AgendaPage = () => {
   const [error, setError] = useState<string>('');
   const navigate = useNavigate();
 
+  // Extended auth service with session management methods
+  const extendedAuthService = authService as ExtendedAuthService;
+
   useEffect(() => {
-    // Check if user is logged in - no token needed for table auth
-    const userData = localStorage.getItem('user');
-    
-    if (userData) {
-      try {
-        const parsedUser: UserType = JSON.parse(userData);
-        setUser(parsedUser);
-        setRegisteredSessions(parsedUser.registeredSessions || []);
-        console.log('AgendaPage loaded user:', parsedUser);
-      } catch (error) {
-        console.error('Error parsing user data:', error);
-        localStorage.removeItem('user');
+    const loadUserAndRegistrations = async () => {
+      // Check if user is logged in
+      const userData = localStorage.getItem('user');
+      
+      if (userData) {
+        try {
+          const parsedUser: UserType = JSON.parse(userData);
+          setUser(parsedUser);
+
+          // Load existing registrations from localStorage first
+          if (parsedUser.registeredSessions) {
+            setRegisteredSessions(parsedUser.registeredSessions);
+          }
+
+          // Try to load from Supabase if method exists
+          if (extendedAuthService.getUserRegistrations) {
+            try {
+              const result = await extendedAuthService.getUserRegistrations(parsedUser.id);
+              if (result.success) {
+                setRegisteredSessions(result.registeredSessions || []);
+                
+                // Update user object in localStorage with latest registrations
+                const updatedUser = { ...parsedUser, registeredSessions: result.registeredSessions || [] };
+                localStorage.setItem('user', JSON.stringify(updatedUser));
+                setUser(updatedUser);
+              }
+            } catch (err) {
+              console.error('Error loading registrations:', err);
+              // Fallback to localStorage data
+            }
+          }
+
+          console.log('AgendaPage loaded user:', parsedUser);
+        } catch (error) {
+          console.error('Error parsing user data:', error);
+          localStorage.removeItem('user');
+        }
       }
-    }
+    };
+
+    loadUserAndRegistrations();
   }, []);
 
   const tracks: Track[] = [
-    { id: 'revenue', name: 'Drive Revenue', icon: <TrendingUp className="w-4 h-4" />, color: 'blue' },
-    { id: 'expenses', name: 'Reduce Expenses', icon: <DollarSign className="w-4 h-4" />, color: 'emerald' },
-    { id: 'productivity', name: 'Increase Productivity', icon: <Zap className="w-4 h-4" />, color: 'purple' },
-    { id: 'cybersecurity', name: 'Enhance Cybersecurity', icon: <Shield className="w-4 h-4" />, color: 'red' }
+    { 
+      id: 'revenue', 
+      name: 'Drive Revenue', 
+      icon: <TrendingUp className="w-4 h-4" />, 
+      color: '#D514FF',
+      bgColor: '#2EA1ED15'
+    },
+    { 
+      id: 'expenses', 
+      name: 'Reduce Expenses', 
+      icon: <DollarSign className="w-4 h-4" />, 
+      color: '#00C6AC',
+      bgColor: '#2EA1ED15'
+    },
+    { 
+      id: 'productivity', 
+      name: 'Increase Productivity', 
+      icon: <Zap className="w-4 h-4" />, 
+      color: '#00A1EF',
+      bgColor: '#2EA1ED15'
+    },
+    { 
+      id: 'cybersecurity', 
+      name: 'Enhance Cybersecurity', 
+      icon: <Shield className="w-4 h-4" />, 
+      color: '#4113FD',
+      bgColor: '#2EA1ED15'
+    }
   ];
 
   const timeSlots: TimeSlot[] = [
@@ -323,9 +402,19 @@ const AgendaPage = () => {
     }
   ];
 
-  const getTrackColor = (trackId: string): string => {
+  // Local storage session management functions
+  const updateLocalStorageSessions = (sessions: RegisteredSession[]) => {
+    if (user) {
+      const updatedUser = { ...user, registeredSessions: sessions };
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      setUser(updatedUser);
+      setRegisteredSessions(sessions);
+    }
+  };
+
+  const getTrackInfo = (trackId: string) => {
     const track = tracks.find(t => t.id === trackId);
-    return track ? track.color : 'gray';
+    return track || { color: '#6B7280', bgColor: '#6B728015' };
   };
 
   const isSessionRegistered = (sessionId: string): boolean => {
@@ -343,42 +432,59 @@ const AgendaPage = () => {
     setError('');
 
     try {
-      if (isSessionRegistered(session.id)) {
-        // Unregister session using table-based auth
-        const result = await authService.unregisterSession(session.id);
-
-        if (result.success) {
-          setRegisteredSessions(result.registeredSessions || []);
-          
-          // Update localStorage
-          const updatedUser = { ...user, registeredSessions: result.registeredSessions || [] };
-          localStorage.setItem('user', JSON.stringify(updatedUser));
-          setUser(updatedUser);
-          console.log('Session unregistered successfully:', session.id);
+      const isRegistered = isSessionRegistered(session.id);
+      
+      if (isRegistered) {
+        // Unregister session
+        if (extendedAuthService.unregisterSession) {
+          try {
+            const result = await extendedAuthService.unregisterSession(session.id);
+            if (result.success) {
+              updateLocalStorageSessions(result.registeredSessions || []);
+              console.log('Session unregistered successfully:', session.id);
+            } else {
+              setError(result.error || 'Failed to unregister session');
+            }
+          } catch (err) {
+            console.error('Error unregistering session:', err);
+            // Fallback to local storage management
+            const updatedSessions = registeredSessions.filter(s => s.sessionId !== session.id);
+            updateLocalStorageSessions(updatedSessions);
+          }
         } else {
-          setError(result.error || 'Failed to unregister session');
+          // Fallback to local storage management
+          const updatedSessions = registeredSessions.filter(s => s.sessionId !== session.id);
+          updateLocalStorageSessions(updatedSessions);
         }
       } else {
-        // Register session using table-based auth
+        // Register session
         const trackName = tracks.find(t => t.id === session.track)?.name || 'General';
-        
-        const result = await authService.registerSession({
+        const sessionData = {
           sessionId: session.id,
           sessionTitle: session.title,
           track: trackName,
           time: timeSlot
-        });
-
-        if (result.success) {
-          setRegisteredSessions(result.registeredSessions || []);
-          
-          // Update localStorage
-          const updatedUser = { ...user, registeredSessions: result.registeredSessions || [] };
-          localStorage.setItem('user', JSON.stringify(updatedUser));
-          setUser(updatedUser);
-          console.log('Session registered successfully:', session.id);
+        };
+        
+        if (extendedAuthService.registerSession) {
+          try {
+            const result = await extendedAuthService.registerSession(sessionData);
+            if (result.success) {
+              updateLocalStorageSessions(result.registeredSessions || []);
+              console.log('Session registered successfully:', session.id);
+            } else {
+              setError(result.error || 'Registration failed');
+            }
+          } catch (err) {
+            console.error('Error registering session:', err);
+            // Fallback to local storage management
+            const updatedSessions = [...registeredSessions, sessionData];
+            updateLocalStorageSessions(updatedSessions);
+          }
         } else {
-          setError(result.error || 'Registration failed');
+          // Fallback to local storage management
+          const updatedSessions = [...registeredSessions, sessionData];
+          updateLocalStorageSessions(updatedSessions);
         }
       }
     } catch (err: any) {
@@ -400,7 +506,7 @@ const AgendaPage = () => {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-white">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-white font-roboto">
       {/* Hero Section */}
       <section className="relative pt-32 pb-16 px-6">
         <div className="max-w-7xl mx-auto">
@@ -443,7 +549,7 @@ const AgendaPage = () => {
               </div>
               <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
                 <Users className="w-6 h-6 text-blue-500 mx-auto mb-2" />
-                <div className="font-semibold text-gray-900">400+ Attendees</div>
+                <div className="font-semibold text-gray-900">200+ Attendees</div>
                 <div className="text-gray-600 text-sm">SMB Leaders & Executives</div>
               </div>
             </div>
@@ -468,12 +574,15 @@ const AgendaPage = () => {
                   onClick={() => setSelectedTrack(track.id)}
                   className={`flex items-center space-x-2 px-6 py-3 rounded-xl transition-all duration-200 font-medium whitespace-nowrap ${
                     selectedTrack === track.id
-                      ? 'bg-blue-600 text-white shadow-sm'
+                      ? 'text-white shadow-sm'
                       : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                   }`}
+                  style={{
+                    backgroundColor: selectedTrack === track.id ? track.color : 'transparent'
+                  }}
                 >
                   {track.icon}
-                  <span>{track.name}</span>
+                  <span className="font-bold">{track.name}</span>
                 </button>
               ))}
             </div>
@@ -536,42 +645,45 @@ const AgendaPage = () => {
                     </div>
                   </div>
                 ) : (
-                  <div className={`grid gap-1 ${
+                  <div className={`p-6 ${
                     selectedTrack === 'all' 
-                      ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4' 
-                      : 'grid-cols-1'
+                      ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4' 
+                      : 'grid grid-cols-1 gap-4'
                   }`}>
                     {slot.sessions?.map((session, sessionIndex) => {
                       const isRegistered = isSessionRegistered(session.id);
-                      const trackColor = getTrackColor(session.track);
+                      const trackInfo = getTrackInfo(session.track);
                       
                       return (
                         <div 
                           key={sessionIndex} 
-                          className={`p-6 ${
-                            sessionIndex < (slot.sessions?.length || 0) - 1 && selectedTrack === 'all' 
-                              ? 'border-r border-gray-200' 
-                              : ''
-                          }`}
+                          className="bg-gray-50 rounded-xl p-6 border border-gray-200 hover:shadow-md transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] cursor-pointer"
                         >
-                          <div className={`text-xs font-medium mb-3 px-3 py-1 rounded-full inline-block bg-${trackColor}-100 text-${trackColor}-700 border border-${trackColor}-200`}>
+                          <div 
+                            className="text-xs font-bold mb-3 px-3 py-1 rounded-full inline-block border"
+                            style={{
+                              backgroundColor: trackInfo.bgColor,
+                              color: trackInfo.color,
+                              borderColor: trackInfo.color + '40'
+                            }}
+                          >
                             {tracks.find(t => t.id === session.track)?.name}
                           </div>
                           
                           <h4 
-                            className="font-medium text-gray-900 mb-2 text-sm leading-tight cursor-pointer hover:text-blue-600 transition-colors"
+                            className="font-bold text-gray-900 mb-2 text-sm leading-tight hover:text-blue-600 transition-colors"
                             onClick={() => setSelectedSession(session)}
                           >
                             {session.title}
                           </h4>
                           
-                          <p className="text-blue-600 text-xs mb-2 font-medium">{session.speaker}</p>
+                          <p className="text-blue-600 text-xs mb-2 font-bold">{session.speaker}</p>
                           <p className="text-gray-600 text-xs mb-4 leading-relaxed line-clamp-3">{session.description}</p>
                           
                           <button
                             onClick={() => handleSessionRegister(session, slot.time)}
                             disabled={loading}
-                            className={`text-xs px-3 py-2 rounded-lg transition-all duration-200 w-full font-medium disabled:opacity-50 ${
+                            className={`text-xs px-3 py-2 rounded-lg transition-all duration-200 w-full font-medium disabled:opacity-50 hover:scale-105 ${
                               isRegistered
                                 ? 'bg-green-100 text-green-700 border border-green-200 hover:bg-green-200'
                                 : user
@@ -615,7 +727,14 @@ const AgendaPage = () => {
             </div>
             <div className="space-y-3 mb-6">
               <p className="text-blue-600 font-medium">{selectedSession.speaker}</p>
-              <div className={`text-xs font-medium px-3 py-1 rounded-full inline-block bg-${getTrackColor(selectedSession.track)}-100 text-${getTrackColor(selectedSession.track)}-700 border border-${getTrackColor(selectedSession.track)}-200`}>
+              <div 
+                className="text-xs font-medium px-3 py-1 rounded-full inline-block border"
+                style={{
+                  backgroundColor: getTrackInfo(selectedSession.track).bgColor,
+                  color: getTrackInfo(selectedSession.track).color,
+                  borderColor: getTrackInfo(selectedSession.track).color + '40'
+                }}
+              >
                 {tracks.find(t => t.id === selectedSession.track)?.name}
               </div>
             </div>
@@ -739,6 +858,13 @@ const AgendaPage = () => {
           </div>
         </div>
       </footer>
+
+      <style>
+        {`
+          @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap');
+          .font-roboto { font-family: 'Roboto', sans-serif; }
+        `}
+      </style>
     </div>
   );
 };
