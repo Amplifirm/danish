@@ -1,9 +1,3 @@
-@import url('https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,600,700,800,900&display=swap');
-
-* {
-  font-family: 'Satoshi', -apple-system, BlinkMacSystemFont, sans-serif;
-  letter-spacing: -0.02em;
-}
 
 @tailwind base;
 @tailwind components;
