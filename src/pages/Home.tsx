@@ -566,9 +566,7 @@ const InnerCompassDashboard: React.FC = () => {
             {[
               { id: 'overview', label: 'Overview', icon: Compass },
               { id: 'learning', label: 'Learning Path', icon: BookOpen },
-              { id: 'habits', label: 'Daily Habits', icon: Calendar },
-              { id: 'goals', label: 'Goals & Progress', icon: Target },
-              { id: 'analytics', label: 'Analytics', icon: BarChart3 },
+              
               { id: 'community', label: 'Community', icon: Users },
               { id: 'accountability', label: 'Accountability', icon: Users },
               { id: 'insights', label: 'AI Insights', icon: Brain },
