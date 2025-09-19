@@ -26,7 +26,6 @@ import {
   Camera,
   Lock,
   CheckCircle2,
-  BarChart3,
   Smile,
   Bed,
   Dumbbell,
